@@ -1,0 +1,12 @@
+.lake/
+/build/
+/tools/generate_external_certificate
+/tools/search_recursive_prefix_threshold
+/tools/check_cone_survivor_gap
+/tools/print_routing_example
+*.exe
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz

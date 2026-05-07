@@ -1,0 +1,11 @@
+name = "twin_prime_external_certificate_endpoint"
+version = "0.1.0"
+defaultTargets = ["TwinPrimeExternal"]
+
+[[require]]
+name = "mathlib"
+path = "../.lake/packages/mathlib"
+
+[[lean_lib]]
+name = "TwinPrimeExternal"
+

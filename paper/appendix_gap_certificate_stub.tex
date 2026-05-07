@@ -1,0 +1,153 @@
+\clearpage
+\section{The empirical gap certificate and midpoint-row gap checker}
+\label{app:gap}
+\noindent
+
+The repository also includes a finite gap checker:
+\[
+  \Lean{GeneratedGapCertificate.external\_exceptionFree\_to\_certificateThreshold}.
+\]
+It certifies that every prime
+\[
+  127<r\le 191264
+\]
+has a midpoint-row twin witness.  So any first exception after \(127\)
+must occur after \(191264\).  The Lean theorem is
+\begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+  \item \Lean{GeneratedGapCertificate.any\_firstException\_after\_127\_occurs\_after\_certificateThreshold}
+\end{itemize}
+
+This theorem is not a dependency of
+\begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+  \item \Lean{TwinPrimeExternal.arbitrarily\_large\_twins}
+\end{itemize}
+It is included because it records the empirical starting point of the search:
+the generated finite contradiction certificate is applied beyond a verified
+no-exception window after the last observed exception \(127\).
+
+\subsection{Checker correctness}
+
+This appendix section proves the correctness of
+\[
+  \Code{tools/check\_cone\_survivor\_gap.cpp}.
+\]
+
+\subsection{Specification}
+
+The checker takes two integers \(L<V\), defaulting to
+\[
+  L=127,\qquad V=191264.
+\]
+It must verify:
+\[
+  \forall r,\ \Prime(r)\wedge L<r\le V
+  \Rightarrow \neg\operatorname{MidpointExceptionalPrime}(r).
+\]
+Equivalently, for every prime \(r\in(L,V]\), it must find an index
+\[
+  1\le h<r
+\]
+such that both \(rh-1\) and \(rh+1\) are prime.
+
+\subsection{Prime enumeration}
+
+The function \Code{primes\_upto(V)} is the ordinary Eratosthenes sieve:
+it iterates \(p=2,\ldots,V\), emits \(p\) if not previously marked composite,
+and marks multiples \(p^2,p^2+p,\ldots\).  The standard invariant is:
+after processing all primes \(<p\), a number \(n\ge p\) is marked if and only
+if it has a prime factor \(<p\).  So at the time \(p\) is inspected, it is
+unmarked if and only if it is prime.  So the returned vector is exactly
+the list of primes up to \(V\).
+
+\subsection{Reduction to indices divisible by six}
+
+Let \(r>3\) be prime.  If \(h\) is odd, then \(rh\) is odd, so both
+\[
+  rh-1,\qquad rh+1
+\]
+are even and larger than \(2\).  So they cannot both be prime.
+
+If \(3\nmid h\), then \(rh\not\equiv 0\pmod 3\), since \(r\ne 3\).  So one
+of \(rh-1,rh+1\) is divisible by \(3\).  In the checked range \(r>127\), this
+divisible neighbor is larger than \(3\), so it is composite.  So any
+successful index \(h\) must be divisible by \(6\).  The checker is complete
+when it searches
+\[
+  h=6,12,18,\ldots < r.
+\]
+
+\subsection{The twin-witness predicate}
+
+The function \Code{cone\_survives(r,h,primes)} computes
+\[
+  n_- = rh-1,\qquad n_+=rh+1,
+\]
+and checks every prime \(q<r\).  It returns true exactly when no prime
+\(q<r\) divides \(n_-\) or \(n_+\).
+
+\begin{lemma}
+Let \(r\) be prime, \(1\le h<r\), and \(n\in\{rh-1,rh+1\}\).  If no prime
+\(q<r\) divides \(n\), then \(n\) is prime.
+\end{lemma}
+
+\begin{proof}
+We have \(n>1\).  Also
+\[
+  rh+1\le r(r-1)+1=r^2-r+1<r^2,
+\]
+so \(n<r^2\).  If \(n\) were composite, it would have a prime divisor
+\[
+  q\le \sqrt n<r.
+\]
+This contradicts the assumption that no prime \(q<r\) divides \(n\).  So
+\(n\) is prime.
+\end{proof}
+
+So, if \Code{cone\_survives(r,h,primes)} returns true, the listed \(h\)
+witnesses \(\operatorname{MidpointTwinWitnessAt}(r,h)\), and \(r\) is not a
+\(\operatorname{MidpointExceptionalPrime}\).
+
+\subsection{Output correctness}
+
+The checker loops over exactly the primes \(r\in(L,V]\).  For each such \(r\),
+it searches every potentially successful index \(h\equiv 0\pmod 6\) with
+\(h<r\).  If it finds a twin witness, it records a row \((r,h)\).  If not, it
+records \(r\) in \Code{failedPrimes}.
+
+The generated run produced
+\[
+  \Code{checkedPrimes}=17236,\qquad
+  \Code{survivorRows}=17236,\qquad
+  \Code{failedPrimes}=[].
+\]
+So every prime in \((127,191264]\) has a midpoint-row twin witness.
+This proves the external Lean declaration
+\[
+  \Lean{GeneratedGapCertificate.external\_exceptionFree\_to\_certificateThreshold}.
+\]
+
+\subsection{Formal objects used in Appendix A}
+
+\begin{filelist}
+  \FileEntry{TwinPrimeExternal/Core.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{ExceptionFreeUpTo}: the finite no-exception-window predicate.
+    \item \Lean{FirstExceptionAfterLastObserved}: the first-exception record used by this auxiliary checker.
+    \item \Lean{firstExceptionAfterLast\_occurs\_after\_of\_exceptionFreeUpTo}: the general theorem pushing a first exception past a checked window.
+    \item \Lean{firstExceptionAfterLast\_occurs\_after\_certificateThreshold\_of\_exceptionFreeUpTo}: the certificate-threshold specialization.
+  \end{itemize}
+
+  \FileEntry{TwinPrimeExternal/GeneratedGapCertificate.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{gapLast}: the generated last-exception bound.
+    \item \Lean{gapCheckedTo}: the generated checked-to threshold.
+    \item \Lean{gapSize}: the generated gap size.
+    \item \Lean{checkedPrimes}: the number of checked primes in the gap run.
+    \item \Lean{failedPrimes}: the generated failed-prime count.
+    \item \Lean{gapLast\_eq\_lastObservedException}: checks the generated last bound.
+    \item \Lean{gapCheckedTo\_eq\_certificateVerifiedTo}: checks the generated checked-to threshold.
+    \item \Lean{failedPrimes\_eq\_zero}: checks that no failures were generated.
+    \item \Lean{external\_exceptionFree\_to\_certificateThreshold}: the auxiliary external gap declaration.
+    \item \Lean{any\_firstException\_after\_127\_occurs\_after\_certificateThreshold}: derives the advertised first-exception lower bound.
+  \end{itemize}
+\end{filelist}
