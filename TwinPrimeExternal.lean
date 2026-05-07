@@ -1,4 +1,5 @@
 import TwinPrimeExternal.Core
+import TwinPrimeExternal.FixedGap
 import TwinPrimeExternal.RecursiveMPPMCertificate
 import TwinPrimeExternal.GeneratedCertificate
 import TwinPrimeExternal.GeneratedGapCertificate

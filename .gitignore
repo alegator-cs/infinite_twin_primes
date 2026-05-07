@@ -4,6 +4,7 @@
 /tools/search_recursive_prefix_threshold
 /tools/check_cone_survivor_gap
 /tools/print_routing_example
+/tools/probe_fixed_gap_patterns
 *.exe
 paper/*.aux
 paper/*.log
