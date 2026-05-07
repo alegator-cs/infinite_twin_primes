@@ -6,6 +6,7 @@
 /tools/print_routing_example
 /tools/probe_fixed_gap_patterns
 /tools/generate_fixed_gap_certificates
+/tools/search_fixed_gap_recursive_prefix_threshold
 *.exe
 paper/*.aux
 paper/*.log
