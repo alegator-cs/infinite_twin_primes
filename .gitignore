@@ -5,6 +5,7 @@
 /tools/check_cone_survivor_gap
 /tools/print_routing_example
 /tools/probe_fixed_gap_patterns
+/tools/generate_fixed_gap_certificates
 *.exe
 paper/*.aux
 paper/*.log
