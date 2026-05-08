@@ -1,13 +1,5 @@
 .lake/
 /build/
-/tools/generate_external_certificate
-/tools/search_recursive_prefix_threshold
-/tools/check_cone_survivor_gap
-/tools/print_routing_example
-/tools/probe_fixed_gap_patterns
-/tools/generate_fixed_gap_certificates
-/tools/search_fixed_gap_recursive_prefix_threshold
-/tools/generate_sharded_mppm_lean_certificate
 /tools/generate_routed_mppm_chain_certificate
 *.exe
 paper/*.aux

@@ -1,98 +1,99 @@
 # Twin Prime External Certificate Endpoint
 
-This repository contains the Lean endpoint and external certificate tooling for the finite-contradiction proof shape described in `paper/twin_prime_external_certificate_endpoint.pdf`.
+This repository contains a minimal Lean endpoint and generated routed MP/PM
+certificate shards for the finite-contradiction proof shape described in
+`paper/twin_prime_external_certificate_endpoint.tex`.
 
-Lean proves the endpoint from one external C++ route-realization bridge:
-
-```lean
-GeneratedCertificate.external_predictedEvents_realized_of_cofinalTail :
-  (exists B, CofinalExceptionTail MidpointExceptionalPrime B) ->
-    GeneratedCertificate.predictedEvents subseteq GeneratedCertificate.actualEvents
-```
-
-Everything after that declaration is Lean-checked:
-
-1. bounded twin-prime midpoints imply a cofinal tail of midpoint-exceptional primes;
-2. the recursive MP/PM certificate turns route realization into a finite set contradiction;
-3. the generated C++ bridge supplies route realization for the predicted event set;
-4. twin midpoints are unbounded;
-5. twin primes are arbitrarily large.
-
-The final theorem is:
+The canonical endpoint is:
 
 ```lean
-TwinPrimeExternal.arbitrarily_large_twins :
-  forall N, exists p, N <= p /\ Nat.Prime p /\ Nat.Prime (p + 2)
+TwinPrimeExternal.GeneratedTailInductionCertificate
+  .arbitrarily_large_twins_of_routedChainRealization
 ```
 
-## Trust boundary
+It has the type:
 
-The file `TwinPrimeExternal/GeneratedCertificate.lean` intentionally contains
-one final-theorem-relevant `axiom`. That declaration is the external C++
-route-realization dependency. The rest of the endpoint is ordinary Lean proof.
+```lean
+TwinPrimeExternal.RoutedChainRealizationCertificate ->
+  TwinPrimeExternal.ArbitrarilyLargeTwins
+```
 
-The auxiliary file `TwinPrimeExternal/GeneratedGapCertificate.lean` contains a
-second external declaration for the finite no-exception window after 127. It
-documents the empirical starting point but is not a dependency of
-`TwinPrimeExternal.arbitrarily_large_twins`.
+The proof path is:
 
-The generated arithmetic currently records:
+1. Lean checks 95,569 generated routed MP/PM descent chains.
+2. Lean checks the finite cardinal inequality `95568 < 95569`.
+3. A `RoutedChainRealizationCertificate` says that, under a cofinal
+   exceptional tail, the checked routed chains are realized as finite target
+   MP/PM events.
+4. The route-chain overflow gives `Not exists B, CofinalExceptionTail ... B`.
+5. The tail-induction interface packages the no-tail theorem.
+6. The core endpoint proves arbitrarily large twin primes.
+
+There are no `axiom`, `constant`, `sorry`, or `admit` declarations in the Lean
+files. The remaining mathematical input is explicit as the argument
+`RoutedChainRealizationCertificate`.
+
+## Main Lean Files
 
 ```text
-firstOverflowRoot           = 191281
-firstOverflowSpan           = 17
-firstOverflowSplitRoots     = 1
-firstOverflowRoutedStarts   = 1
-generatedActualEventCount   = 95568
-generatedPredictedEventCount= 181052
-falsePredictedEventCount    = 115633
+TwinPrimeExternal/Core.lean
+TwinPrimeExternal/RecursiveMPPMCertificate.lean
+TwinPrimeExternal/RoutedMPPMChainCertificate.lean
+TwinPrimeExternal/GeneratedRoutedMPPMChains/*.lean
+TwinPrimeExternal/RoutedMPPMChainBridge.lean
+TwinPrimeExternal/TailInductionCertificate.lean
+TwinPrimeExternal/Final.lean
+TwinPrimeExternal/GeneratedTailInductionCertificate.lean
 ```
 
-## Regenerate the certificate
+## Regenerate Routed Chain Shards
 
-There are four C++ tools:
-
-* `tools/search_recursive_prefix_threshold.cpp` is the actual finite search.
-  It consumes `certificates/generated_mppm_pressure_certificate.json` and emits
-  the small count summary.
-* `tools/generate_external_certificate.cpp` turns that summary into the Lean
-  external certificate file.
-* `tools/check_cone_survivor_gap.cpp` is the midpoint-row gap checker for the
-  finite window used here.
-* `tools/print_routing_example.cpp` prints the descent route displayed in the
-  paper.
-
-Run from the repository root with a C++17 compiler:
+Compile the generator from the repository root:
 
 ```bash
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic tools/check_cone_survivor_gap.cpp -o tools/check_cone_survivor_gap
-./tools/check_cone_survivor_gap --last 127 --checked-to 191264 --json-out certificates/generated_gap_certificate_summary.json --lean-out TwinPrimeExternal/GeneratedGapCertificate.lean
-
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic tools/search_recursive_prefix_threshold.cpp -o tools/search_recursive_prefix_threshold
-./tools/search_recursive_prefix_threshold --cert certificates/generated_mppm_pressure_certificate.json --rstart 191265 --max-span 20 --json-out certificates/generated_external_certificate_summary.json --print-every 1
-
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic tools/generate_external_certificate.cpp -o tools/generate_external_certificate
-./tools/generate_external_certificate --input-json certificates/generated_external_certificate_summary.json --audit --lean-out TwinPrimeExternal/GeneratedCertificate.lean --json-out certificate.json
+g++ -std=c++17 -O2 -Wall -Wextra -pedantic \
+  tools/generate_routed_mppm_chain_certificate.cpp \
+  -o tools/generate_routed_mppm_chain_certificate
 ```
+
+Run it:
+
+```bash
+./tools/generate_routed_mppm_chain_certificate \
+  --cert certificates/generated_mppm_pressure_certificate.json \
+  --out-dir TwinPrimeExternal/GeneratedRoutedMPPMChains \
+  --start 191281 \
+  --shard-size 1000
+```
+
+The generated shards are committed, so regeneration is only needed when changing
+the certificate input or generator.
 
 ## Build
 
-Run from the repository root:
-
 ```bash
-lake build
+lake build TwinPrimeExternal
 ```
 
-## Expected axiom scan
+## Checks
 
-The scan should find exactly the generated external certificate declarations:
+Placeholder scan:
 
 ```bash
 rg -n "\b(sorry|admit|axiom|constant)\b" TwinPrimeExternal -g "*.lean"
 ```
 
-Expected declarations:
+Expected output: no matches.
 
-* `GeneratedCertificate.external_predictedEvents_realized_of_cofinalTail`;
-* `GeneratedGapCertificate.external_exceptionFree_to_certificateThreshold`.
+Axiom check:
+
+```bash
+lake env lean --stdin <<'EOF'
+import TwinPrimeExternal.GeneratedTailInductionCertificate
+#print axioms TwinPrimeExternal.GeneratedTailInductionCertificate.arbitrarily_large_twins_of_routedChainRealization
+EOF
+```
+
+Expected project-specific axioms: none. Standard Lean axioms such as
+`propext`, `Classical.choice`, and `Quot.sound` may appear.
 

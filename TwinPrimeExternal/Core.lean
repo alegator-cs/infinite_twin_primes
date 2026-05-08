@@ -32,12 +32,6 @@ def certificateFirstSplitPrime : Nat := 191281
 
 def generatedMPPMCard : Nat := 95568
 
-def predictedEventCount : Nat := 181052
-
-theorem predictedEventCount_exceeds_generatedMPPMCard :
-    generatedMPPMCard < predictedEventCount := by
-  norm_num [generatedMPPMCard, predictedEventCount]
-
 structure ObservedExceptionGap where
   lastException : Nat
   verifiedTo : Nat

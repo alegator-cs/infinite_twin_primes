@@ -261,7 +261,7 @@ MP/PM block.  Distinct routes can collide at the same side-labeled target
 event, and some routes can escape the target block or fail to produce a
 descended split prime before bottoming out.  The certificate is built to handle
 both effects: it counts only unique predicted side-labeled MP/PM pairs in the
-target block, so duplicate routes do not inflate \(E_p\), and escaping routes
+target block, so duplicate routes do not inflate \(E_r\), and escaping routes
 are simply absent from the predicted target-event set.
 
 The routing implication used by the proof is exactly this: under a cofinal
@@ -279,36 +279,32 @@ The external finite contradiction certificate starts at the first split prime
 
 Let
 \[
-  E_p=181052
+  E_r=95569
 \]
 be the number of distinct predicted side-labeled MP/PM events produced by the
 recursive finite computation, and let
 \[
   E_a=95568
 \]
-be the size of the actual generated MP/PM event set.  Since \(E_p>E_a\), a
+be the size of the actual generated MP/PM event set.  Since \(E_r>E_a\), a
 cofinal exceptional tail realizing those predicted events is impossible.  The
-generated C++ certificate packages precisely the route-realization bridge as
-the Lean declaration
+generated C++ certificate emits the arithmetic route chains; the semantic
+realization step is represented in Lean by the explicit certificate type
 \[
-  \Lean{GeneratedCertificate.external\_predictedEvents\_realized\_of\_cofinalTail}.
+  \Lean{RoutedChainRealizationCertificate}.
 \]
-Lean wraps the generated finite sets in
+Given such a certificate, Lean derives
 \[
-  \Lean{RecursiveMPPMEventCertificate}
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}
 \]
-and derives
-\[
-  \Lean{GeneratedCertificate.external\_no\_cofinalExceptionTail}
-\]
-from the bridge and the checked strict inequality \(E_a<E_p\).
+from the bridge and the checked strict inequality \(E_a<E_r\).
 
 The proof in Lean is intentionally transparent.  Everything after this one
-external route-realization bridge is ordinary Lean proof.  The final theorem is
+route-realization certificate is ordinary Lean proof.  The routed-chain endpoint is
 \[
-  \Lean{TwinPrimeExternal.arbitrarily\_large\_twins}.
+  \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_routedChainRealization}.
 \]
-Its statement expands to:
+Given a value of \Lean{RoutedChainRealizationCertificate}, its statement expands to:
 \[
   \forall N,\ \exists p,\ N\le p\wedge\Prime(p)\wedge\Prime(p+2).
 \]
@@ -321,23 +317,19 @@ The final theorem depends on the standard Lean axioms
 \]
 and on exactly one project-specific external route-realization certificate:
 \[
-  \Lean{GeneratedCertificate.external\_predictedEvents\_realized\_of\_cofinalTail}.
+  \Lean{RoutedChainRealizationCertificate}.
 \]
 The theorem
 \[
-  \Lean{GeneratedCertificate.external\_no\_cofinalExceptionTail}
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}
 \]
 is Lean-derived from
 \[
-  \Lean{no\_cofinalExceptionTail\_of\_recursiveMPPMEventCertificate}.
+  \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}.
 \]
-The auxiliary gap certificate
-\[
-  \Lean{GeneratedGapCertificate.external\_exceptionFree\_to\_certificateThreshold}
-\]
-proves that no exceptional prime after \(127\) occurs at or before \(191264\),
-but the final theorem does not depend on it.  It is included to document the
-empirical starting point.
+The larger observed no-exception gap is not a dependency of the final Lean
+endpoint.  It remains useful motivation for why this finite contradiction was
+searched for at the threshold used by the generated routed-chain certificate.
 
 \subsection{Formal object directory for Section 1}
 
@@ -349,8 +341,8 @@ empirical starting point.
     \item \Lean{certificateVerifiedTo}: the reduced certificate threshold, \(191264\).
     \item \Lean{certificateFirstSplitPrime}: the first split prime used by the recursive certificate, \(191281\).
     \item \Lean{generatedMPPMCard}: the generated actual MP/PM event count, \(95568\).
-    \item \Lean{predictedEventCount}: the generated predicted event count, \(181052\).
-    \item \Lean{predictedEventCount\_exceeds\_generatedMPPMCard}: checks \(95568<181052\).
+    \item \Lean{GeneratedRoutedMPPMChains.checkedChainCount}: the generated predicted event count, \(95569\).
+    \item \Lean{GeneratedRoutedMPPMChains.checkedChainCount\_eq}: evaluates the sharded generated count.
     \item \Lean{ObservedExceptionGap}: the record for a last-exception bound and a later verified bound.
     \item \Lean{ObservedExceptionGap.size}: the numerical size of such a gap.
     \item \Lean{observedExceptionGap}: the \(127\) to \(10^9\) motivating gap record.
@@ -373,17 +365,24 @@ empirical starting point.
     \item \Lean{DescendedPrimeEdge.no\_two\_cycle}: rules out a two-cycle.
   \end{itemize}
 
-  \FileEntry{TwinPrimeExternal/GeneratedCertificate.lean}
+  \FileEntry{TwinPrimeExternal/RoutedMPPMChainBridge.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{E\_a}: the generated actual event count.
-    \item \Lean{E\_p}: the generated predicted event count.
-    \item \Lean{E\_p\_exceeds\_E\_a}: checks the generated overflow inequality.
-    \item \Lean{external\_predictedEvents\_realized\_of\_cofinalTail}: the final-theorem-relevant external route-realization declaration.
+    \item \Lean{routed\_checkedChainCount\_exceeds\_generatedMPPMCard}: checks \(95568<95569\).
+    \item \Lean{routedChainPredicted\_card\_exceeds\_actual}: checks the generated overflow inequality.
+    \item \Lean{RoutedChainRealizationCertificate}: the explicit semantic realization certificate consumed by the final endpoint.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}: the finite-set contradiction from that certificate.
+  \end{itemize}
+
+  \FileEntry{TwinPrimeExternal/GeneratedTailInductionCertificate.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{fromRoutedChainRealization}: converts the routed-chain realization certificate into the tail-induction interface.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: derives no cofinal exceptional tail.
+    \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the routed-chain twin-prime endpoint.
   \end{itemize}
 
   \FileEntry{TwinPrimeExternal/Final.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{arbitrarily\_large\_twins}: the final exported Lean endpoint.
+    \item \Lean{arbitrarily\_large\_twins}: converts any midpoint tail-induction certificate into arbitrarily large twins.
   \end{itemize}
 \end{filelist}
 
@@ -436,9 +435,9 @@ In Lean this is
 \end{definition}
 
 This direct definition says that the midpoint row associated to \(r\) contains
-no twin-prime pair.  Earlier searches also used divisor formulations of
-exception.  The finite gap checker in Appendix~\ref{app:gap} bridges the
-divisor view to this direct midpoint-row view in a bounded window.
+no twin-prime pair.  Earlier searches also used divisor formulations of the
+same condition, but the reduced Lean endpoint works directly with the
+midpoint-row predicate above.
 
 \subsection{Formal objects used in Section 2}
 
@@ -646,7 +645,7 @@ gaps, is
 The main external finite certificate is expressed in Lean as the
 route-realization bridge
 \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{GeneratedCertificate.external\_predictedEvents\_realized\_of\_cofinalTail}
+  \item \Lean{RoutedChainRealizationCertificate}
 \end{itemize}
 whose mathematical shape is
 \[
@@ -657,7 +656,7 @@ whose mathematical shape is
 \]
 Lean combines this bridge with the finite event counts to prove:
 \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{GeneratedCertificate.external\_no\_cofinalExceptionTail}
+  \item \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}
 \end{itemize}
 whose mathematical shape is
 \[
@@ -671,15 +670,15 @@ The generated file records the numerical overflow:
   E_a=95568,
 \]
 \[
-  E_p=181052,
+  E_r=95569,
 \]
 and Lean checks
 \[
-  E_a<E_p.
+  E_a<E_r.
 \]
 The Lean theorem name for the arithmetic inequality is
 \[
-  \Lean{GeneratedCertificate.E\_p\_exceeds\_E\_a}.
+  \Lean{routedChainPredicted\_card\_exceeds\_actual}.
 \]
 
 \begin{certificate}[Generated finite contradiction obstruction]
@@ -692,38 +691,37 @@ There is no cofinal tail of midpoint-exceptional primes:
 \end{certificate}
 
 \begin{proof}[External certificate proof]
-The C++ program \Code{search\_recursive\_prefix\_threshold.cpp} computes the
-finite recursive MP/PM event closure from the generated MP/PM block.  It finds
-a finite prefix beginning at \(191265\) whose first split prime is \(191281\) and
-whose recursive closure contains \(181052\) distinct side-labeled predicted
-MP/PM events.  The generated finite MP/PM event set contains only \(95568\)
-events.  Under a cofinal exceptional tail, the finite closure makes every
-predicted event actual in the side-labeled MP/PM event set.  This would inject
-a set of cardinality \(181052\) into a set of cardinality \(95568\),
-impossible.
+The C++ program \Code{generate\_routed\_mppm\_chain\_certificate.cpp} generates
+explicit recursive MP/PM route-chain witnesses from the generated MP/PM block.
+At start split prime \(191281\), the generated reachable closure contains
+\(95569\) distinct side-labeled predicted MP/PM events.  The generated finite
+MP/PM event set contains only \(95568\) events.  Under a cofinal exceptional
+tail, the route-realization certificate makes every predicted event actual in
+the side-labeled MP/PM event set.  This would inject a set of cardinality
+\(95569\) into a set of cardinality \(95568\), impossible.
 
 The correctness argument for the finite computation is included below in this
-section.  In Lean, the route-realization part is the external declaration
+section.  In Lean, the route-realization part is the explicit certificate
 \[
-  \Lean{GeneratedCertificate.external\_predictedEvents\_realized\_of\_cofinalTail}.
+  \Lean{RoutedChainRealizationCertificate}.
 \]
 The cardinal contradiction from this bridge is checked by
 \[
-  \Lean{no\_cofinalExceptionTail\_of\_recursiveMPPMEventCertificate}.
+  \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}.
 \]
 \end{proof}
 
 \subsection{Correctness of the recursive MP/PM event certificate}
 \label{sec:events}
 
-This subsection proves the correctness of
+This subsection describes the correctness of
 \[
-  \Code{tools/search\_recursive\_prefix\_threshold.cpp}.
+  \Code{tools/generate\_routed\_mppm\_chain\_certificate.cpp}.
 \]
-The purpose of the algorithm is finite and exact: compute the recursive
-quadratic-routing closure of selected split primes into a generated
-side-labeled MP/PM event universe, and stop when the number of distinct
-predicted events exceeds the actual MP/PM cap.
+The purpose of the algorithm is finite and exact: emit explicit recursive
+quadratic-routing chains into a generated side-labeled MP/PM event universe.
+Lean checks the emitted row equations, decreasing descended-prime edges,
+terminal event encodings, shard ordering, and the count \(95569>95568\).
 
 \subsubsection{Input certificate}
 
@@ -878,33 +876,29 @@ descended prime satisfies \(q<p\), the recursion terminates.
 The C++ certificate uses deterministic 64-bit Miller-Rabin for primality
 testing and Pollard-Rho for prime factorization.
 
-\subsubsection{Prefix search correctness}
+\subsubsection{Route-chain generation correctness}
 
-The main loop scans integers \(R\ge 191265\).  It skips nonprimes and primes
-which are not split primes.  For every split prime \(R\), it computes
+The main generator is invoked with start split prime \(R=191281\).  It computes
 \[
   R(R)=\Code{reachable\_events(R)}
 \]
-and inserts these event identifiers into a global finite set
+and emits one checked chain witness for each event identifier in the finite set
 \[
   P_{\operatorname{seen}}.
 \]
-The counter \Code{distinctPredictedEvents} is exactly
+The generated index sums the shard-local chain counts, so
 \[
   |P_{\operatorname{seen}}|,
 \]
-because each event identifier is counted only the first time its marker in
-\Code{covered} changes from false to true.
+is checked in Lean as \(\Lean{GeneratedRoutedMPPMChains.checkedChainCount}\).
 
-The run stops at the first point where
+The generated output for the chosen start prime is:
 \[
-  |P_{\operatorname{seen}}|>95568.
-\]
-The generated output is:
-\[
-  R=191281,\qquad
-  |P_{\operatorname{seen}}|=181052,\qquad
-  |A|=95568.
+\begin{aligned}
+  R&=191281,\\
+  |P_{\operatorname{seen}}|&=95569,\\
+  |A|&=95568.
+\end{aligned}
 \]
 So the finite predicted event set is strictly larger than the actual
 side-labeled MP/PM event set.
@@ -924,16 +918,16 @@ So
 \]
 But the computed values give
 \[
-  181052=|P_{\operatorname{seen}}|>95568=|A|,
+  95569=|P_{\operatorname{seen}}|>95568=|A|,
 \]
 a contradiction.  So no such cofinal exceptional tail exists.  This proves the
 Lean theorem
 \[
-  \Lean{GeneratedCertificate.external\_no\_cofinalExceptionTail}.
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}.
 \]
-The only project-specific external declaration used to derive it is
+The only project-specific external certificate needed to derive it is
 \[
-  \Lean{GeneratedCertificate.external\_predictedEvents\_realized\_of\_cofinalTail}.
+  \Lean{RoutedChainRealizationCertificate}.
 \]
 
 \subsection{Formal objects used in Section 5}
@@ -942,8 +936,6 @@ The only project-specific external declaration used to derive it is
   \FileEntry{TwinPrimeExternal/Core.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
     \item \Lean{generatedMPPMCard}: the actual generated MP/PM event count \(95568\).
-    \item \Lean{predictedEventCount}: the predicted event count \(181052\).
-    \item \Lean{predictedEventCount\_exceeds\_generatedMPPMCard}: checks \(95568<181052\).
     \item \Lean{CofinalExceptionTail}: the cofinal-tail hypothesis consumed by the route-realization bridge.
     \item \Lean{MidpointExceptionalPrime}: the exception predicate used in that cofinal tail.
   \end{itemize}
@@ -961,46 +953,59 @@ The only project-specific external declaration used to derive it is
     \item \Lean{DescendedPrimeEdge.decreases}: extracts the strict decrease.
     \item \Lean{DescendedPrimeEdge.irrefl}: rules out self-edges.
     \item \Lean{DescendedPrimeEdge.no\_two\_cycle}: rules out two-cycles.
-    \item \Lean{RecursiveMPPMEventCertificate}: the Lean certificate shape.
-    \item \Lean{RecursiveMPPMEventCertificate.predicted\_card\_exceeds\_actual}: rewrites generated card fields into \(95568<181052\).
-    \item \Lean{RecursiveMPPMEventCertificate.false\_of\_cofinalTail}: the finite-set contradiction.
-    \item \Lean{no\_cofinalExceptionTail\_of\_recursiveMPPMEventCertificate}: packages the contradiction as a no-tail theorem.
   \end{itemize}
 
-  \FileEntry{TwinPrimeExternal/GeneratedCertificate.lean}
+  \FileEntry{TwinPrimeExternal/RoutedMPPMChainCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{firstOverflowPrime}: the first overflow split prime \(191281\).
-    \item \Lean{firstOverflowSpan}: the generated prefix span.
-    \item \Lean{firstOverflowSplitPrimes}: the number of split primes used at first overflow.
-    \item \Lean{firstOverflowRoutedStarts}: the number of routed starts at first overflow.
-    \item \Lean{E\_a}: the actual event count \(95568\).
-    \item \Lean{E\_p}: the predicted event count \(181052\).
-    \item \Lean{falsePredictedEventCount}: the generated count of false predicted events in the audit.
-    \item \Lean{E\_a\_eq\_cap}: identifies \(E_a\) with the core actual-count constant.
-    \item \Lean{E\_p\_eq\_core}: identifies \(E_p\) with the core predicted-count constant.
-    \item \Lean{E\_p\_exceeds\_E\_a}: checks \(E_a<E_p\).
-    \item \Lean{core\_predictedEventCount\_exceeds\_generatedMPPMCard}: transfers the generated inequality to the core constants.
-    \item \Lean{actualEvents}: the finite actual event set represented by count.
-    \item \Lean{actualEvents\_card}: its generated cardinality proof.
-    \item \Lean{predictedEvents}: the finite predicted event set represented by count.
-    \item \Lean{predictedEvents\_card}: its generated cardinality proof.
-    \item \Lean{external\_predictedEvents\_realized\_of\_cofinalTail}: the external route-realization bridge.
-    \item \Lean{recursiveMPPMEventCertificate}: instantiates the Lean certificate shape.
-    \item \Lean{external\_no\_cofinalExceptionTail}: the derived no-tail theorem.
+    \item \Lean{RoutedMPPMChainCertificate.rowProduct}: computes the left or right row product.
+    \item \Lean{RoutedMPPMChainCertificate.rowValid}: checks a row equation and cone-index bounds.
+    \item \Lean{RoutedMPPMChainCertificate.EdgeWitness.valid}: checks a descended-prime edge.
+    \item \Lean{RoutedMPPMChainCertificate.DirectEventWitness.valid}: checks a terminal target event.
+    \item \Lean{RoutedMPPMChainCertificate.ChainWitness.valid}: checks a full route chain.
+    \item \Lean{RoutedMPPMChainCertificate.strictlyIncreasingIds}: checks that generated event identifiers are unique and ordered.
+  \end{itemize}
+
+  \FileEntry{TwinPrimeExternal/GeneratedRoutedMPPMChains/Index.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{GeneratedRoutedMPPMChains.checkedChainCount}: the predicted event count \(95569\).
+    \item \Lean{GeneratedRoutedMPPMChains.checkedChainCount\_eq}: identifies the generated chain count.
+    \item \Lean{GeneratedRoutedMPPMChains.checkedActualPredictedCount\_eq}: checks the audit count of already-actual predicted chains.
+    \item \Lean{GeneratedRoutedMPPMChains.checkedFalsePredictedCount\_eq}: checks the audit count of false predicted chains.
+    \item \Lean{GeneratedRoutedMPPMChains.shard\_boundaries\_strict}: proves shard event-id ranges are strictly ordered.
+  \end{itemize}
+
+  \FileEntry{TwinPrimeExternal/RoutedMPPMChainBridge.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{routed\_checkedChainCount\_exceeds\_generatedMPPMCard}: checks \(95568<95569\).
+    \item \Lean{routedChainActualEvents}: the finite actual event set represented by count.
+    \item \Lean{routedChainPredictedEvents}: the finite predicted event set represented by count.
+    \item \Lean{routedChainPredictedEvents\_card\_eq}: identifies the predicted event-set cardinality with \(95569\).
+    \item \Lean{routedChainActualEvents\_card\_eq}: identifies the actual event-set cardinality with \(95568\).
+    \item \Lean{routedChainPredicted\_card\_exceeds\_actual}: checks \(E_a<E_r\).
+    \item \Lean{RoutedChainRealizationCertificate}: the semantic realization certificate.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}: packages the cardinal contradiction as a no-tail theorem.
+  \end{itemize}
+
+  \FileEntry{TwinPrimeExternal/GeneratedTailInductionCertificate.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{fromRoutedChainRealization}: converts the routed-chain realization certificate into the tail-induction interface.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: the derived no-tail theorem.
+    \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the routed-chain twin-prime endpoint.
   \end{itemize}
 \end{filelist}
-
 \clearpage
 \section{Main theorem}
 \noindent
 
-\begin{theorem}[Arbitrarily large twin primes]
+\begin{theorem}[Routed-chain certificate implies arbitrarily large twin primes]
+Given a value of \(\Lean{RoutedChainRealizationCertificate}\),
 \[
   \forall N,\ \exists p,\ N\le p\wedge\Prime(p)\wedge\Prime(p+2).
 \]
 \end{theorem}
 
 \begin{proof}
+Let \(\mathcal C\) be the routed-chain realization certificate.
 Assume, for contradiction, that twin primes are not arbitrarily large.  Then
 there is some \(N\) such that no prime \(p\ge N\) has \(p+2\) prime.  This
 implies \(\operatorname{BoundedTwinMids}\): take \(M=N+1\).  If
@@ -1014,7 +1019,7 @@ By the bounded-midpoint lemma, \(\operatorname{BoundedTwinMids}\) gives a
 cofinal tail of \(\operatorname{MidpointExceptionalPrime}\) primes.  This
 contradicts the generated certificate theorem
 \[
-  \Lean{GeneratedCertificate.external\_no\_cofinalExceptionTail}.
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}.
 \]
 So twin primes are arbitrarily large.
 \end{proof}
@@ -1023,9 +1028,9 @@ The Lean proof of the last implication is theorem
 \[
   \Lean{arbitrarily\_large\_twins\_of\_no\_cofinalExceptionTail}.
 \]
-The final theorem exported by the project is
+The routed-chain theorem exported by the project is
 \[
-  \Lean{TwinPrimeExternal.arbitrarily\_large\_twins}.
+  \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_routedChainRealization}.
 \]
 
 \subsection{Formal objects used in Section 6}
@@ -1042,16 +1047,16 @@ The final theorem exported by the project is
     \item \Lean{no\_observed\_firstException\_of\_no\_certificateFirstException}: specializes the previous theorem to the observed gap.
   \end{itemize}
 
-  \FileEntry{TwinPrimeExternal/GeneratedCertificate.lean}
+  \FileEntry{TwinPrimeExternal/GeneratedTailInductionCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{external\_no\_cofinalExceptionTail}: supplies the no-tail theorem used by the main endpoint.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: supplies the no-tail theorem used by the main endpoint.
   \end{itemize}
 
   \FileEntry{TwinPrimeExternal/Final.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{no\_cofinalExceptionTail}: reexports the generated no-tail theorem.
+    \item \Lean{no\_cofinalExceptionTail}: converts a midpoint tail-induction certificate into a no-tail theorem.
     \item \Lean{not\_boundedTwinMids}: derives unbounded midpoint twins.
-    \item \Lean{arbitrarily\_large\_twins}: the final theorem.
+    \item \Lean{arbitrarily\_large\_twins}: the final generic endpoint from a midpoint tail-induction certificate.
   \end{itemize}
 \end{filelist}
 
@@ -1097,58 +1102,39 @@ Congressus Numerantium, 7:51--70, 1973.
 
 \appendix
 
-\input{paper/appendix_gap_certificate_stub.tex}
-
 \clearpage
 \section{Lean audit}
 \noindent
 
-The audit command
+The routed-chain endpoint is audited with
 \begin{lstlisting}
-#print axioms TwinPrimeExternal.arbitrarily_large_twins
+#print axioms TwinPrimeExternal.GeneratedTailInductionCertificate.arbitrarily_large_twins_of_routedChainRealization
 \end{lstlisting}
-reports:
+The theorem is parametric in a value of
+\Lean{RoutedChainRealizationCertificate}.  Lean reports only the standard axioms
+used by ordinary classical finite-set reasoning:
 \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
   \item \Lean{propext}
   \item \Lean{Classical.choice}
   \item \Lean{Quot.sound}
-  \item \Lean{TwinPrimeExternal.GeneratedCertificate.external\_predictedEvents\_realized\_of\_cofinalTail}
 \end{itemize}
-The certificate theorem
-\begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{GeneratedCertificate.external\_no\_cofinalExceptionTail}
-\end{itemize}
-is derived in Lean from
-\begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{no\_cofinalExceptionTail\_of\_recursiveMPPMEventCertificate}
-\end{itemize}
-The auxiliary theorem
-\begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{GeneratedGapCertificate.any\_firstException\_after\_127\_occurs\_after\_certificateThreshold}
-\end{itemize}
-depends on
-\begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{GeneratedGapCertificate.external\_exceptionFree\_to\_certificateThreshold}
-\end{itemize}
-It is not a dependency of the final theorem.
+The semantic routed-chain certificate is an explicit theorem argument, not a
+hidden project axiom.
 
-\subsection{Formal objects used in Appendix B}
+\subsection{Formal objects used in Appendix A}
 
 \begin{filelist}
-  \FileEntry{TwinPrimeExternal/Final.lean}
+  \FileEntry{TwinPrimeExternal/GeneratedTailInductionCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{arbitrarily\_large\_twins}: the theorem inspected by \Code{\#print axioms}.
+    \item \Lean{fromRoutedChainRealization}: builds the midpoint tail-induction certificate.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: the no-tail endpoint from the routed-chain realization certificate.
+    \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the theorem inspected by \Code{\#print axioms}.
   \end{itemize}
 
-  \FileEntry{TwinPrimeExternal/GeneratedCertificate.lean}
+  \FileEntry{TwinPrimeExternal/RoutedMPPMChainBridge.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{external\_predictedEvents\_realized\_of\_cofinalTail}: the only project-specific declaration reported for the final theorem.
-    \item \Lean{external\_no\_cofinalExceptionTail}: checked separately as a Lean-derived theorem from that declaration.
-  \end{itemize}
-
-  \FileEntry{TwinPrimeExternal/GeneratedGapCertificate.lean}
-  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{external\_exceptionFree\_to\_certificateThreshold}: the auxiliary gap declaration that appears only when auditing the auxiliary gap theorem.
+    \item \Lean{RoutedChainRealizationCertificate}: the explicit certificate parameter of the audited theorem.
+    \item \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}: the finite cardinality contradiction consumed by the endpoint.
   \end{itemize}
 \end{filelist}
 
@@ -1156,108 +1142,84 @@ It is not a dependency of the final theorem.
 \section{Repository coverage map}
 \noindent
 
-This appendix covers every non-build file in this repository.  The
-\Code{.lake} directory, compiled C++ binaries, and LaTeX auxiliary files are
-build artifacts.  The C++ source files in \Code{tools/} carry the external
-certificate algorithms.
+This appendix covers every non-build file in this repository.  The \Code{.lake}
+directory, compiled C++ binaries, and LaTeX auxiliary files are build artifacts.
+The C++ source file in \Code{tools/} carries the finite certificate generator.
 
 \subsection{Lean files}
 
 \begin{itemize}
-  \item \Code{TwinPrimeExternal.lean}: the aggregate import file for the Lean
-  library.  It imports the core definitions, recursive certificate model,
-  generated certificates, and final theorem.
+  \item \Code{TwinPrimeExternal.lean}: the aggregate import file for the Lean library.
 
   \item \Code{TwinPrimeExternal/Core.lean}: defines the numerical constants
-  \(127\), \(10^9\), \(191264\), \(191281\), \(95568\), and \(181052\); defines
-  observed gaps, first-exception records, cofinal exception tails, bounded twin
-  midpoints, midpoint rows, midpoint witnesses, and midpoint-exceptional primes;
-  proves the Lean chain from bounded twin midpoints to a cofinal exceptional
-  tail and from no cofinal exceptional tail to arbitrarily large twin primes.
-  Sections 2--4 and the main theorem section cover these definitions and
-  lemmas.  Section 6 lists the small fallback first-exception endpoints.
+  \(127\), \(10^9\), \(191264\), \(191281\), and \(95568\); defines observed
+  gaps, first-exception records, cofinal exception tails, bounded twin midpoints,
+  midpoint rows, midpoint witnesses, and midpoint-exceptional primes; proves the
+  Lean chain from bounded twin midpoints to a cofinal exceptional tail and from
+  no cofinal exceptional tail to arbitrarily large twin primes.
 
   \item \Code{TwinPrimeExternal/RecursiveMPPMCertificate.lean}: formalizes the
-  Lean-side recursive MP/PM certificate shape, the four row identities, and the
-  finite-set cardinality contradiction.  Section 1.2 and Section 5 cover this
-  file.
+  row identities, side-event encoding, and decreasing descended-prime edge facts
+  used by the routed-chain checker.
 
-  \item \Code{TwinPrimeExternal/GeneratedCertificate.lean}: generated Lean file
-  containing \(E_a=95568\), \(E_p=181052\), the finite event-set cardinality
-  checks, the route-realization external declaration, and the derived no-tail
-  theorem.  Section 5 and the Lean audit cover this file.
+  \item \Code{TwinPrimeExternal/RoutedMPPMChainCertificate.lean}: defines the
+  Boolean checker for generated row witnesses, edge witnesses, direct event
+  witnesses, full chains, strict event-id ordering, and shard-local counts.
 
-  \item \Code{TwinPrimeExternal/GeneratedGapCertificate.lean}: generated Lean
-  file for the auxiliary no-exception window \((127,191264]\).  Appendix A
-  covers this file.  Its external declaration is not a dependency of the final
-  theorem.
+  \item \Code{TwinPrimeExternal/GeneratedRoutedMPPMChains/ShardNNN.lean}: the
+  generated shard files.  Each shard contains explicit route-chain data and
+  native-decision proofs for validity, ordering, and local counts.
+
+  \item \Code{TwinPrimeExternal/GeneratedRoutedMPPMChains/Index.lean}: imports
+  all shards and proves the global generated counts, including
+  \(\Lean{GeneratedRoutedMPPMChains.checkedChainCount}=95569\).
+
+  \item \Code{TwinPrimeExternal/RoutedMPPMChainBridge.lean}: converts the checked
+  generated chain count into the finite predicted/actual event-set cardinality
+  contradiction, relative to \Lean{RoutedChainRealizationCertificate}.
+
+  \item \Code{TwinPrimeExternal/TailInductionCertificate.lean}: packages the
+  no-cofinal-tail result into the midpoint tail-induction interface and proves
+  the generic no-tail consequence.
 
   \item \Code{TwinPrimeExternal/Final.lean}: exports the final no-tail,
-  unbounded-midpoint, and arbitrarily-large-twins endpoints.  The main theorem
-  section and Lean audit cover this file.
+  unbounded-midpoint, and arbitrarily-large-twins endpoints from a tail-induction
+  certificate.
+
+  \item \Code{TwinPrimeExternal/GeneratedTailInductionCertificate.lean}: connects
+  \Lean{RoutedChainRealizationCertificate} to \Lean{Final.lean} and exposes the
+  routed-chain arbitrarily-large-twins theorem.
 \end{itemize}
 
 \subsection{C++ tools and certificates}
 
 \begin{itemize}
-  \item \Code{tools/search\_recursive\_prefix\_threshold.cpp}: computes the
-  recursive MP/PM closure and finds the first overflow \(E_p>E_a\).  Section 5
-  proves the intended algorithm.
-
-  \item \Code{tools/generate\_external\_certificate.cpp}: converts the search
-  summary into \Code{TwinPrimeExternal/GeneratedCertificate.lean} and the
-  top-level \Code{certificate.json} audit summary.  Section 5 covers the
-  generated theorem boundary.
-
-  \item \Code{tools/check\_cone\_survivor\_gap.cpp}: finite midpoint-row gap
-  checker for \((127,191264]\).  Appendix A covers its specification and
-  correctness argument.  The historical function name still contains
-  \Code{cone}; the paper terminology uses midpoint rows.
-
-  \item \Code{tools/print\_routing\_example.cpp}: prints the five-stage descent
-  route displayed in Section 1.2.
+  \item \Code{tools/generate\_routed\_mppm\_chain\_certificate.cpp}: reads the
+  finite MP/PM input certificate, computes reachable routed-chain witnesses from
+  the chosen start split prime, emits the Lean shard directory, and prints an
+  audit summary.
 
   \item \Code{certificates/generated\_mppm\_pressure\_certificate.json}: finite
-  generated Base/MP/PM input block consumed by the recursive MP/PM search.
-  Section 5.1 covers its role.
-
-  \item \Code{certificates/generated\_external\_certificate\_summary.json}:
-  compact JSON summary of the recursive overflow computation.  It records the
-  values emitted into \Code{GeneratedCertificate.lean}.
-
-  \item \Code{certificates/generated\_gap\_certificate\_summary.json}: compact
-  JSON summary of the finite midpoint-row gap checker.  Appendix A covers its
-  contents.
-
-  \item \Code{certificate.json}: top-level audit summary emitted by
-  \Code{generate\_external\_certificate.cpp}.  It repeats the finite overflow
-  values \(191281\), \(17\), \(95568\), \(181052\), and \(115633\).
+  generated Base/MP/PM input block consumed by the routed-chain generator.
 \end{itemize}
 
 \subsection{Repository and paper support files}
 
 \begin{itemize}
-  \item \Code{paper/twin\_prime\_external\_certificate\_endpoint.tex}: this
-  paper.
-
-  \item \Code{paper/appendix\_gap\_certificate\_stub.tex}: separate appendix
-  stub for the auxiliary gap checker and its generated Lean certificate.
+  \item \Code{paper/twin\_prime\_external\_certificate\_endpoint.tex}: this paper.
 
   \item \Code{paper/twin\_prime\_external\_certificate\_endpoint.pdf}: rendered
   PDF output from the TeX source.
 
-  \item \Code{README.md}: command-oriented repository summary and regeneration
-  notes.
+  \item \Code{README.md}: command-oriented repository summary and regeneration notes.
 
-  \item \Code{lakefile.toml}: Lean package definition for
-  \Code{TwinPrimeExternal}.
+  \item \Code{lakefile.toml}: Lean package definition for \Code{TwinPrimeExternal}.
 
   \item \Code{lake-manifest.json}: Lake dependency manifest.
 
   \item \Code{lean-toolchain}: Lean toolchain pin.
 
-  \item \Code{.gitignore}: excludes generated build clutter and local
-  artifacts.
+  \item \Code{.gitignore}: excludes generated build clutter and local artifacts.
 \end{itemize}
 
 \end{document}
