@@ -1,5 +1,5 @@
 import TwinPrimeExternal.Core
 import TwinPrimeExternal.RecursiveMPPMCertificate
-import TwinPrimeExternal.GeneratedShardedMPPM.Index
-import TwinPrimeExternal.ShardedMPPMBridge
+import TwinPrimeExternal.GeneratedRoutedMPPMChains.Index
+import TwinPrimeExternal.RoutedMPPMChainBridge
 import TwinPrimeExternal.Final

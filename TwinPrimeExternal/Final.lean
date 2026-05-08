@@ -1,20 +1,19 @@
-import TwinPrimeExternal.ShardedMPPMBridge
+import TwinPrimeExternal.RoutedMPPMChainBridge
 
 /-!
 # Final External-Certificate Endpoint
 
-The theorem `arbitrarily_large_twins` is unconditional inside Lean after
-importing the generated sharded MP/PM overflow certificate.  Its sole non-Lean
-dependency is the route-realization declaration named
-`external_shardedPredictedEvents_realized_of_cofinalTail`; the overflow count is
-checked by Lean from the generated shard modules.
+The theorem `arbitrarily_large_twins` is conditional only on the semantic
+route-realization declaration named
+`external_routedChains_realized_of_cofinalTail`.  The generated MP/PM overflow
+is checked by Lean from explicit recursive descent chain shards.
 -/
 
 namespace TwinPrimeExternal
 
 theorem no_cofinalExceptionTail :
     Not (exists B, CofinalExceptionTail MidpointExceptionalPrime B) :=
-  no_cofinalExceptionTail_of_shardedMPPMCertificate
+  no_cofinalExceptionTail_of_routedMPPMChainCertificate
 
 theorem not_boundedTwinMids : Not BoundedTwinMids :=
   no_boundedTwinMids_of_no_cofinalExceptionTail no_cofinalExceptionTail
