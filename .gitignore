@@ -7,6 +7,7 @@
 /tools/probe_fixed_gap_patterns
 /tools/generate_fixed_gap_certificates
 /tools/search_fixed_gap_recursive_prefix_threshold
+/tools/generate_sharded_mppm_lean_certificate
 *.exe
 paper/*.aux
 paper/*.log

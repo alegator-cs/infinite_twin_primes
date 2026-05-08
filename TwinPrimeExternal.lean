@@ -5,4 +5,6 @@ import TwinPrimeExternal.GeneratedCertificate
 import TwinPrimeExternal.GeneratedGapCertificate
 import TwinPrimeExternal.GeneratedFixedGapCertificates
 import TwinPrimeExternal.GeneratedFixedGapRecursiveCertificates
+import TwinPrimeExternal.GeneratedShardedMPPM.Index
+import TwinPrimeExternal.ShardedMPPMBridge
 import TwinPrimeExternal.Final
