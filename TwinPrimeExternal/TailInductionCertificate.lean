@@ -31,6 +31,19 @@ structure TailInductionCertificate (Exception : Nat -> Prop) where
 
 namespace TailInductionCertificate
 
+def of_no_cofinalTail
+    {Exception : Nat -> Prop}
+    (baseThreshold : Nat)
+    (hno : Not (exists B, CofinalExceptionTail Exception B)) :
+    TailInductionCertificate Exception where
+  baseThreshold := baseThreshold
+  base_contradiction := by
+    intro tail
+    exact hno ⟨baseThreshold, tail⟩
+  successor_contradiction := by
+    intro B _hB _hContradicts tail
+    exact hno ⟨B + 1, tail⟩
+
 theorem no_cofinalTail
     {Exception : Nat -> Prop}
     (cert : TailInductionCertificate Exception) :
