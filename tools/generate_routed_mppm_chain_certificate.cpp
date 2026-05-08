@@ -433,7 +433,7 @@ struct Search {
 
 struct Options {
   std::string cert = "certificates/generated_mppm_pressure_certificate.json";
-  std::string out_dir = "TwinPrimeExternal/GeneratedRoutedMPPMChains";
+  std::string out_dir = "TwinPrimeCertificate/GeneratedRoutedMPPMChains";
   u64 start = 191281;
   std::size_t shard_size = 250;
   std::size_t limit = 0;
@@ -516,10 +516,10 @@ void write_shard(const fs::path& path, const std::string& mod,
   u64 actual = 0;
   for (std::size_t i = lo; i < hi; ++i) actual += chains[i].actual;
   u64 falseCount = (u64)(hi - lo) - actual;
-  out << "import TwinPrimeExternal.RoutedMPPMChainCertificate\n\n";
+  out << "import TwinPrimeCertificate.RoutedMPPMChainCertificate\n\n";
   out << "set_option maxRecDepth 20000\n\n";
-  out << "namespace TwinPrimeExternal.GeneratedRoutedMPPMChains." << mod << "\n\n";
-  out << "open TwinPrimeExternal.RoutedMPPMChainCertificate\n\n";
+  out << "namespace TwinPrimeCertificate.GeneratedRoutedMPPMChains." << mod << "\n\n";
+  out << "open TwinPrimeCertificate.RoutedMPPMChainCertificate\n\n";
   out << "def chains : List ChainWitness :=\n  [";
   for (std::size_t i = lo; i < hi; ++i) {
     if (i != lo) out << ",\n   ";
@@ -541,7 +541,7 @@ void write_shard(const fs::path& path, const std::string& mod,
   out << "  native_decide\n\n";
   out << "theorem falseCount_eq : falseCount chains = falsePredictedCount := by\n";
   out << "  native_decide\n\n";
-  out << "end TwinPrimeExternal.GeneratedRoutedMPPMChains." << mod << "\n";
+  out << "end TwinPrimeCertificate.GeneratedRoutedMPPMChains." << mod << "\n";
 }
 
 void write_index(const fs::path& path, std::size_t shard_count,
@@ -549,12 +549,12 @@ void write_index(const fs::path& path, std::size_t shard_count,
   std::ofstream out(path);
   if (!out) throw std::runtime_error("could not write index");
   for (std::size_t i = 0; i < shard_count; ++i) {
-    out << "import TwinPrimeExternal.GeneratedRoutedMPPMChains." << shard_name(i) << "\n";
+    out << "import TwinPrimeCertificate.GeneratedRoutedMPPMChains." << shard_name(i) << "\n";
   }
   out << "\n/-!\n# Generated Routed MP/PM Chain Certificate\n\n";
   out << "Each shard checks explicit recursive descent witnesses for predicted events.\n";
   out << "-/\n\n";
-  out << "namespace TwinPrimeExternal.GeneratedRoutedMPPMChains\n\n";
+  out << "namespace TwinPrimeCertificate.GeneratedRoutedMPPMChains\n\n";
   out << "def shardCount : Nat := " << shard_count << "\n";
   out << "def checkedChainCount : Nat :=\n  ";
   for (std::size_t i = 0; i < shard_count; ++i) {
@@ -600,7 +600,7 @@ void write_index(const fs::path& path, std::size_t shard_count,
     out << shard_name(i) << ".firstId, " << shard_name(i) << ".lastId";
   }
   out << "]\n\n";
-  out << "end TwinPrimeExternal.GeneratedRoutedMPPMChains\n";
+  out << "end TwinPrimeCertificate.GeneratedRoutedMPPMChains\n";
 }
 
 }  // namespace
@@ -651,3 +651,4 @@ int main(int argc, char** argv) {
   }
   return 0;
 }
+

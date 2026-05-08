@@ -1,21 +1,21 @@
-# Twin Prime External Certificate Endpoint
+# Twin Prime Certificate Endpoint
 
 This repository contains a minimal Lean endpoint and generated routed MP/PM
 certificate shards for the finite-contradiction proof shape described in
-`paper/twin_prime_external_certificate_endpoint.tex`.
+`paper/twin_prime_certificate_endpoint.tex`.
 
 The canonical endpoint is:
 
 ```lean
-TwinPrimeExternal.GeneratedTailInductionCertificate
+TwinPrimeCertificate.GeneratedTailInductionCertificate
   .arbitrarily_large_twins_of_routedChainRealization
 ```
 
 It has the type:
 
 ```lean
-TwinPrimeExternal.RoutedChainRealizationCertificate ->
-  TwinPrimeExternal.ArbitrarilyLargeTwins
+TwinPrimeCertificate.RoutedChainRealizationCertificate ->
+  TwinPrimeCertificate.ArbitrarilyLargeTwins
 ```
 
 The proof path is:
@@ -36,14 +36,14 @@ files. The remaining mathematical input is explicit as the argument
 ## Main Lean Files
 
 ```text
-TwinPrimeExternal/Core.lean
-TwinPrimeExternal/RecursiveMPPMCertificate.lean
-TwinPrimeExternal/RoutedMPPMChainCertificate.lean
-TwinPrimeExternal/GeneratedRoutedMPPMChains/*.lean
-TwinPrimeExternal/RoutedMPPMChainBridge.lean
-TwinPrimeExternal/TailInductionCertificate.lean
-TwinPrimeExternal/Final.lean
-TwinPrimeExternal/GeneratedTailInductionCertificate.lean
+TwinPrimeCertificate/Core.lean
+TwinPrimeCertificate/RecursiveMPPMCertificate.lean
+TwinPrimeCertificate/RoutedMPPMChainCertificate.lean
+TwinPrimeCertificate/GeneratedRoutedMPPMChains/*.lean
+TwinPrimeCertificate/RoutedMPPMChainBridge.lean
+TwinPrimeCertificate/TailInductionCertificate.lean
+TwinPrimeCertificate/Final.lean
+TwinPrimeCertificate/GeneratedTailInductionCertificate.lean
 ```
 
 ## Regenerate Routed Chain Shards
@@ -61,7 +61,7 @@ Run it:
 ```bash
 ./tools/generate_routed_mppm_chain_certificate \
   --cert certificates/generated_mppm_pressure_certificate.json \
-  --out-dir TwinPrimeExternal/GeneratedRoutedMPPMChains \
+  --out-dir TwinPrimeCertificate/GeneratedRoutedMPPMChains \
   --start 191281 \
   --shard-size 1000
 ```
@@ -72,7 +72,7 @@ the certificate input or generator.
 ## Build
 
 ```bash
-lake build TwinPrimeExternal
+lake build TwinPrimeCertificate
 ```
 
 ## Checks
@@ -80,7 +80,7 @@ lake build TwinPrimeExternal
 Placeholder scan:
 
 ```bash
-rg -n "\b(sorry|admit|axiom|constant)\b" TwinPrimeExternal -g "*.lean"
+rg -n "\b(sorry|admit|axiom|constant)\b" TwinPrimeCertificate -g "*.lean"
 ```
 
 Expected output: no matches.
@@ -89,11 +89,13 @@ Axiom check:
 
 ```bash
 lake env lean --stdin <<'EOF'
-import TwinPrimeExternal.GeneratedTailInductionCertificate
-#print axioms TwinPrimeExternal.GeneratedTailInductionCertificate.arbitrarily_large_twins_of_routedChainRealization
+import TwinPrimeCertificate.GeneratedTailInductionCertificate
+#print axioms TwinPrimeCertificate.GeneratedTailInductionCertificate.arbitrarily_large_twins_of_routedChainRealization
 EOF
 ```
 
 Expected project-specific axioms: none. Standard Lean axioms such as
 `propext`, `Classical.choice`, and `Quot.sound` may appear.
+
+
 
