@@ -32,12 +32,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap12.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -63,12 +64,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap48.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -94,12 +96,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap60.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -125,12 +128,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap108.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -156,12 +160,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap120.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -187,12 +192,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap168.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -218,12 +224,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap192.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -249,12 +256,13 @@ theorem predictedEvents_exceeds_actualSideEvents :
     actualSideEvents < predictedEvents := by
   norm_num [actualSideEvents, predictedEvents]
 
-axiom external_no_cofinalExceptionTail :
+def NoCofinalTailCertificate : Prop :=
     Not (exists K,
       TwinPrimeExternal.CofinalExceptionTail
         (TwinPrimeExternal.FixedGapExceptionalPrime d) K)
 
-theorem arbitrarily_large_pairs :
+theorem arbitrarily_large_pairs
+    (external_no_cofinalExceptionTail : NoCofinalTailCertificate) :
     TwinPrimeExternal.ArbitrarilyLargeFixedGapPrimePairs d :=
   TwinPrimeExternal.GeneratedFixedGapCertificates.gap240.arbitrarily_large_pairs_of_no_tail
     external_no_cofinalExceptionTail
@@ -262,3 +270,4 @@ theorem arbitrarily_large_pairs :
 end gap240
 
 end TwinPrimeExternal.GeneratedFixedGapRecursiveCertificates
+

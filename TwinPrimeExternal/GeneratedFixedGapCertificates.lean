@@ -46,19 +46,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -101,19 +102,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -156,19 +158,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -211,19 +214,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -266,19 +270,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -321,19 +326,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -376,19 +382,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -431,19 +438,20 @@ theorem actualGap_le_246 : actualGap <= 246 := by
 theorem failedRoots_eq_zero : failedRoots = 0 := by
   rfl
 
-/-- Trusted external finite scan for this fixed gap. -/
-axiom external_exceptionFree_to_certificateThreshold :
+/-- Lean proposition represented by the generated finite scan for this fixed gap. -/
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       (TwinPrimeExternal.FixedGapExceptionalPrime d)
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         (TwinPrimeExternal.FixedGapExceptionalPrime d)) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 /--
 Total fixed-gap endpoint status for this candidate.  This theorem is
@@ -462,3 +470,4 @@ theorem arbitrarily_large_pairs_of_no_tail
 end gap240
 
 end TwinPrimeExternal.GeneratedFixedGapCertificates
+

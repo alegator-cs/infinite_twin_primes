@@ -31,22 +31,23 @@ theorem failedPrimes_eq_zero :
   rfl
 
 /--
-Trusted external C++ gap certificate.
+Lean proposition represented by the generated finite gap certificate.
 
 The checker found a midpoint-row twin witness for every prime
 `127 < r <= 191264`, so no such prime is midpoint-exceptional.
 -/
-axiom external_exceptionFree_to_certificateThreshold :
+def ExceptionFreeCertificate : Prop :=
     TwinPrimeExternal.ExceptionFreeUpTo
       TwinPrimeExternal.MidpointExceptionalPrime
       TwinPrimeExternal.certificateVerifiedTo
 
 theorem any_firstException_after_127_occurs_after_certificateThreshold
+    (free : ExceptionFreeCertificate)
     (firstException :
       TwinPrimeExternal.FirstExceptionAfterLastObserved
         TwinPrimeExternal.MidpointExceptionalPrime) :
     TwinPrimeExternal.certificateVerifiedTo < firstException.r :=
   TwinPrimeExternal.firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFreeUpTo
-    external_exceptionFree_to_certificateThreshold firstException
+    free firstException
 
 end TwinPrimeExternal.GeneratedGapCertificate

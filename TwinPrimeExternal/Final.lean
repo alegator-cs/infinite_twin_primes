@@ -1,25 +1,33 @@
-import TwinPrimeExternal.RoutedMPPMChainBridge
+import TwinPrimeExternal.TailInductionCertificate
 
 /-!
-# Final External-Certificate Endpoint
+# Final Tail-Induction Endpoint
 
-The theorem `arbitrarily_large_twins` is conditional only on the semantic
-route-realization declaration named
-`external_routedChains_realized_of_cofinalTail`.  The generated MP/PM overflow
-is checked by Lean from explicit recursive descent chain shards.
+This file exposes the final endpoint in the dependency order we want:
+
+* a checked tail-induction certificate proves that no cofinal exceptional tail
+  exists;
+* no cofinal exceptional tail proves unbounded twin-prime midpoints;
+* unbounded twin-prime midpoints prove arbitrarily large twin primes.
 -/
 
 namespace TwinPrimeExternal
 
-theorem no_cofinalExceptionTail :
+theorem no_cofinalExceptionTail
+    (cert : MidpointTailInductionCertificate) :
     Not (exists B, CofinalExceptionTail MidpointExceptionalPrime B) :=
-  no_cofinalExceptionTail_of_routedMPPMChainCertificate
+  no_cofinalExceptionTail_of_tailInductionCertificate cert
 
-theorem not_boundedTwinMids : Not BoundedTwinMids :=
-  no_boundedTwinMids_of_no_cofinalExceptionTail no_cofinalExceptionTail
+theorem not_boundedTwinMids
+    (cert : MidpointTailInductionCertificate) :
+    Not BoundedTwinMids :=
+  no_boundedTwinMids_of_no_cofinalExceptionTail
+    (no_cofinalExceptionTail cert)
 
-theorem arbitrarily_large_twins : ArbitrarilyLargeTwins :=
+theorem arbitrarily_large_twins
+    (cert : MidpointTailInductionCertificate) :
+    ArbitrarilyLargeTwins :=
   arbitrarily_large_twins_of_no_cofinalExceptionTail
-    no_cofinalExceptionTail
+    (no_cofinalExceptionTail cert)
 
 end TwinPrimeExternal

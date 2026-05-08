@@ -64,38 +64,37 @@ theorem predictedEvents_card :
   simp
 
 /--
-Trusted external C++ route-realization bridge.
+Route-realization bridge required by this generated count certificate.
 
-This is the only project-specific external proof dependency in the minimal
-endpoint.  It is the formal version of Section 5's algorithm-correctness
-claim: if a cofinal exceptional tail existed, every unique predicted MP/PM
-event produced by the recursive descent would be an actual event in the
-generated finite target block.
+If supplied as a checked Lean theorem, it says that if a cofinal exceptional
+tail existed, every unique predicted MP/PM event produced by the recursive
+descent would be an actual event in the generated finite target block.
 -/
-axiom external_predictedEvents_realized_of_cofinalTail :
+def GeneratedRouteRealization : Prop :=
     (exists B,
       TwinPrimeExternal.CofinalExceptionTail
         TwinPrimeExternal.MidpointExceptionalPrime B) ->
       predictedEvents ⊆ actualEvents
 
-def recursiveMPPMEventCertificate :
+def recursiveMPPMEventCertificate
+    (realized : GeneratedRouteRealization) :
     TwinPrimeExternal.RecursiveMPPMEventCertificate where
   actualEvents := actualEvents
   predictedEvents := predictedEvents
   actual_card := actualEvents_card
   predicted_card := predictedEvents_card
-  predicted_realized_of_cofinalTail :=
-    external_predictedEvents_realized_of_cofinalTail
+  predicted_realized_of_cofinalTail := realized
 
 /--
 No cofinal exceptional tail, derived inside Lean from the recursive MP/PM event
 certificate and the checked cardinal arithmetic `95568 < 181052`.
 -/
-theorem external_no_cofinalExceptionTail :
+theorem no_cofinalExceptionTail
+    (realized : GeneratedRouteRealization) :
     Not (exists B,
       TwinPrimeExternal.CofinalExceptionTail
         TwinPrimeExternal.MidpointExceptionalPrime B) :=
   TwinPrimeExternal.no_cofinalExceptionTail_of_recursiveMPPMEventCertificate
-    recursiveMPPMEventCertificate
+    (recursiveMPPMEventCertificate realized)
 
 end TwinPrimeExternal.GeneratedCertificate

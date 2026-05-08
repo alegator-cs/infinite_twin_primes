@@ -39,17 +39,6 @@ theorem routedChainPredictedEvents_card :
       GeneratedRoutedMPPMChains.checkedChainCount := by
   simp [routedChainPredictedEvents]
 
-/--
-Semantic realization bridge for the Lean-checked route chains.
-
-The shards verify the concrete arithmetic descent chains.  This assumption is
-now only the mathematical interpretation step: under a cofinal exceptional tail,
-each checked chain contributes a real MP/PM event in the finite target block.
--/
-axiom external_routedChains_realized_of_cofinalTail :
-    (exists B, CofinalExceptionTail MidpointExceptionalPrime B) ->
-      routedChainPredictedEvents ⊆ routedChainActualEvents
-
 theorem routedChainPredictedEvents_card_eq :
     routedChainPredictedEvents.card = 95569 := by
   rw [routedChainPredictedEvents_card]
@@ -65,11 +54,24 @@ theorem routedChainPredicted_card_exceeds_actual :
   rw [routedChainActualEvents_card_eq, routedChainPredictedEvents_card_eq]
   norm_num
 
-theorem no_cofinalExceptionTail_of_routedMPPMChainCertificate :
+/--
+Semantic realization certificate for the Lean-checked route chains.
+
+The shards verify the concrete arithmetic descent chains.  This structure field
+is the mathematical interpretation step: under a cofinal exceptional tail, each
+checked chain contributes a real MP/PM event in the finite target block.
+-/
+structure RoutedChainRealizationCertificate where
+  realized_of_cofinalTail :
+    (exists B, CofinalExceptionTail MidpointExceptionalPrime B) ->
+      routedChainPredictedEvents ⊆ routedChainActualEvents
+
+theorem no_cofinalExceptionTail_of_routedMPPMChainCertificate
+    (cert : RoutedChainRealizationCertificate) :
     Not (exists B, CofinalExceptionTail MidpointExceptionalPrime B) := by
   intro tail
   have hsubset : routedChainPredictedEvents ⊆ routedChainActualEvents :=
-    external_routedChains_realized_of_cofinalTail tail
+    cert.realized_of_cofinalTail tail
   have hle :
       routedChainPredictedEvents.card <= routedChainActualEvents.card :=
     Finset.card_le_card hsubset

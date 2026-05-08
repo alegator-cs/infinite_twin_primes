@@ -126,6 +126,71 @@ theorem firstExceptionAfterLast_occurs_after_certificateThreshold_of_exceptionFr
 def CofinalExceptionTail (Exception : Nat -> Prop) (B : Nat) : Prop :=
   forall r, Nat.Prime r -> B < r -> Exception r
 
+/-- A cofinal tail starting after `B` is already contradictory. -/
+def CofinalTailContradicts (Exception : Nat -> Prop) (B : Nat) : Prop :=
+  CofinalExceptionTail Exception B -> False
+
+theorem cofinalTail_mono_threshold
+    {Exception : Nat -> Prop} {B C : Nat}
+    (hBC : B <= C)
+    (tail : CofinalExceptionTail Exception B) :
+    CofinalExceptionTail Exception C := by
+  intro r hr hCr
+  exact tail r hr (lt_of_le_of_lt hBC hCr)
+
+theorem cofinalTailContradicts_mono_backward
+    {Exception : Nat -> Prop} {B C : Nat}
+    (hBC : B <= C)
+    (hnoC : CofinalTailContradicts Exception C) :
+    CofinalTailContradicts Exception B := by
+  intro tailB
+  exact hnoC (cofinalTail_mono_threshold hBC tailB)
+
+/--
+Tail-threshold induction.
+
+If a cofinal tail is contradictory at a base threshold `B0`, and the
+contradiction is inherited when the threshold is advanced from `B` to `B+1`,
+then every later threshold is contradictory.
+-/
+theorem cofinalTailContradicts_of_base_and_successor
+    {Exception : Nat -> Prop} {B0 : Nat}
+    (hbase : CofinalTailContradicts Exception B0)
+    (hstep :
+      forall B,
+        B0 <= B ->
+          CofinalTailContradicts Exception B ->
+            CofinalTailContradicts Exception (B + 1)) :
+    forall B, B0 <= B -> CofinalTailContradicts Exception B := by
+  exact Nat.le_induction hbase hstep
+
+/--
+No cofinal tail exists if a base threshold is contradictory and that
+contradiction is inherited by every successor threshold.
+
+This is the formal version of the "prove the base prefix, then shift the tail
+start by one and lengthen the prefix" argument.  The successor step is the
+place where a concrete pressure-growth or certificate-inheritance theorem must
+be supplied.
+-/
+theorem no_cofinalTail_of_base_and_successor_contradiction
+    {Exception : Nat -> Prop} {B0 : Nat}
+    (hbase : CofinalTailContradicts Exception B0)
+    (hstep :
+      forall B,
+        B0 <= B ->
+          CofinalTailContradicts Exception B ->
+            CofinalTailContradicts Exception (B + 1)) :
+    Not (exists B, CofinalExceptionTail Exception B) := by
+  intro htail
+  rcases htail with ⟨B, tailB⟩
+  by_cases hB0B : B0 <= B
+  · exact
+      (cofinalTailContradicts_of_base_and_successor hbase hstep
+        B hB0B) tailB
+  · have hBB0 : B <= B0 := by omega
+    exact hbase (cofinalTail_mono_threshold hBB0 tailB)
+
 def BoundedTwinMids : Prop :=
   exists M,
     forall m, M < m ->
