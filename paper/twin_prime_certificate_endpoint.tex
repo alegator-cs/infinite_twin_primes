@@ -78,7 +78,7 @@
 We formalize the Lean endpoint for a finite-contradiction approach to twin
 prime infinitude.  The checked core proves that supposing the finiteness of
 twins forces a cofinal tail of midpoint-exceptional primes, and that any
-cofinal tail contradicts a moving-window MP/PM event-pressure certificate.  The
+cofinal tail contradicts a finite-base MP/PM certificate plus successor-recovery certificate.  The
 remaining mathematical content is the pressure certificate itself: fresh
 eligible exceptional starts must create enough distinct composite-prime and
 prime-composite middle-pair events in the finite moving window.  The generated
@@ -292,23 +292,25 @@ recursive finite computation, and let
 \]
 be the size of the actual generated MP/PM event set.  Since \(E_r>E_a\), a
 cofinal exceptional tail realizing those predicted events is impossible.  The
-generated C++ certificate emits the arithmetic route chains; the semantic
-realization step is represented in Lean by the explicit certificate type
+generated C++ certificate emits the arithmetic route chains.  The full
+inductive endpoint is represented in Lean by the explicit certificate type
 \[
-  \Lean{RoutedChainRealizationCertificate}.
+  \Lean{GeneratedSuccessorRecoveryCertificate}.
 \]
-Given such a certificate, Lean derives
+Its base field is the finite routed-chain realization certificate, and its
+successor field is the DFI--Toth-shaped recovery step.  Given such a
+certificate, Lean derives
 \[
-  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}
 \]
 from the bridge and the checked strict inequality \(E_a<E_r\).
 
 The proof in Lean is intentionally transparent.  Everything after this one
-route-realization certificate is ordinary Lean proof.  The routed-chain endpoint is
+successor-recovery certificate is ordinary Lean proof.  The certificate endpoint is
 \[
-  \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_routedChainRealization}.
+  \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}.
 \]
-Given a value of \Lean{RoutedChainRealizationCertificate}, its statement expands to:
+Given a value of \Lean{GeneratedSuccessorRecoveryCertificate}, its statement expands to:
 \[
   \forall N,\ \exists p,\ N\le p\wedge\Prime(p)\wedge\Prime(p+2).
 \]
@@ -319,17 +321,17 @@ The final theorem depends on the standard Lean axioms
 \[
   \Lean{propext},\quad \Lean{Classical.choice},\quad \Lean{Quot.sound},
 \]
-and on exactly one project-specific routed-chain realization certificate:
+and on exactly one project-specific generated successor-recovery certificate:
 \[
-  \Lean{RoutedChainRealizationCertificate}.
+  \Lean{GeneratedSuccessorRecoveryCertificate}.
 \]
 The theorem
 \[
-  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}
 \]
 is Lean-derived from
 \[
-  \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}.
+  \Lean{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}.
 \]
 The larger observed no-exception gap is not a dependency of the final Lean
 endpoint.  It remains useful motivation for why this finite contradiction was
@@ -373,15 +375,16 @@ searched for at the threshold used by the generated routed-chain certificate.
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
     \item \Lean{routed\_checkedChainCount\_exceeds\_generatedMPPMCard}: checks \(95568<95569\).
     \item \Lean{routedChainPredicted\_card\_exceeds\_actual}: checks the generated overflow inequality.
-    \item \Lean{RoutedChainRealizationCertificate}: the explicit semantic realization certificate consumed by the final endpoint.
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}: the finite-set contradiction from that certificate.
+    \item \Lean{RoutedBaseCaseRealizationCertificate}: the explicit base-case realization certificate consumed by the final endpoint.
+    \item \Lean{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}: the finite-set contradiction from that certificate.
   \end{itemize}
 
   \FileEntry{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{fromRoutedChainRealization}: converts the routed-chain realization certificate into the tail-induction interface.
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: derives no cofinal exceptional tail.
-    \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the routed-chain twin-prime endpoint.
+    \item \Lean{GeneratedSuccessorRecoveryCertificate}: packages the base-case realization certificate with successor recovery.
+    \item \Lean{fromGeneratedSuccessorRecovery}: converts the generated successor certificate into the tail-induction interface.
+    \item \Lean{no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}: derives no cofinal exceptional tail.
+    \item \Lean{arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}: the routed-chain twin-prime endpoint.
   \end{itemize}
 
   \FileEntry{TwinPrimeCertificate/Final.lean}
@@ -646,21 +649,23 @@ gaps, is
 \section{The generated finite certificate}
 \noindent
 
-The main generated finite certificate is expressed in Lean as the
-route-realization bridge
+The generated finite base case is expressed in Lean as the route-realization
+bridge
 \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{RoutedChainRealizationCertificate}
+  \item \Lean{RoutedBaseCaseRealizationCertificate}
 \end{itemize}
 whose mathematical shape is
 \[
-\bigl(\exists B,\operatorname{CofinalExceptionTail}
-    (\operatorname{MidpointExceptionalPrime},B)\bigr)
+\operatorname{CofinalExceptionTail}
+    (\operatorname{MidpointExceptionalPrime},\operatorname{certificateVerifiedTo})
   \Rightarrow
   \operatorname{predictedEvents}\subseteq\operatorname{actualEvents}.
 \]
-Lean combines this bridge with the finite event counts to prove:
+Lean combines this bridge with the finite event counts to prove the base
+contradiction.  The public endpoint packages that base contradiction with the
+successor-recovery induction step:
 \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-  \item \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}
+  \item \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}
 \end{itemize}
 whose mathematical shape is
 \[
@@ -707,11 +712,11 @@ the side-labeled MP/PM event set.  This would inject a set of cardinality
 The correctness argument for the finite computation is included below in this
 section.  In Lean, the route-realization part is the explicit certificate
 \[
-  \Lean{RoutedChainRealizationCertificate}.
+  \Lean{GeneratedSuccessorRecoveryCertificate}.
 \]
 The cardinal contradiction from this bridge is checked by
 \[
-  \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}.
+  \Lean{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}.
 \]
 \end{proof}
 
@@ -927,11 +932,11 @@ But the computed values give
 a contradiction.  So no such cofinal exceptional tail exists.  This proves the
 Lean theorem
 \[
-  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}.
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}.
 \]
-The only project-specific routed-chain certificate needed to derive it is
+The only project-specific endpoint certificate needed to derive it is
 \[
-  \Lean{RoutedChainRealizationCertificate}.
+  \Lean{GeneratedSuccessorRecoveryCertificate}.
 \]
 
 \subsection{Formal objects used in Section 5}
@@ -986,15 +991,16 @@ The only project-specific routed-chain certificate needed to derive it is
     \item \Lean{routedChainPredictedEvents\_card\_eq}: identifies the predicted event-set cardinality with \(95569\).
     \item \Lean{routedChainActualEvents\_card\_eq}: identifies the actual event-set cardinality with \(95568\).
     \item \Lean{routedChainPredicted\_card\_exceeds\_actual}: checks \(E_a<E_r\).
-    \item \Lean{RoutedChainRealizationCertificate}: the semantic realization certificate.
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}: packages the cardinal contradiction as a no-tail theorem.
+    \item \Lean{RoutedBaseCaseRealizationCertificate}: the base-case semantic realization certificate.
+    \item \Lean{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}: packages the cardinal contradiction as a no-tail theorem.
   \end{itemize}
 
   \FileEntry{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{fromRoutedChainRealization}: converts the routed-chain realization certificate into the tail-induction interface.
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: the derived no-tail theorem.
-    \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the routed-chain twin-prime endpoint.
+    \item \Lean{GeneratedSuccessorRecoveryCertificate}: packages the base certificate with successor recovery.
+    \item \Lean{fromGeneratedSuccessorRecovery}: converts the generated successor certificate into the tail-induction interface.
+    \item \Lean{no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}: the derived no-tail theorem.
+    \item \Lean{arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}: the routed-chain twin-prime endpoint.
   \end{itemize}
 \end{filelist}
 
@@ -1056,7 +1062,7 @@ the shifted-tail recovery theorem.
 \noindent
 
 \begin{theorem}[Routed-chain certificate implies arbitrarily large twin primes]
-Given a value of \(\Lean{RoutedChainRealizationCertificate}\),
+Given a value of \(\Lean{GeneratedSuccessorRecoveryCertificate}\),
 \[
   \forall N,\ \exists p,\ N\le p\wedge\Prime(p)\wedge\Prime(p+2).
 \]
@@ -1077,7 +1083,7 @@ By the bounded-midpoint lemma, \(\operatorname{BoundedTwinMids}\) gives a
 cofinal tail of \(\operatorname{MidpointExceptionalPrime}\) primes.  This
 contradicts the generated certificate theorem
 \[
-  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_routedChainRealization}.
+  \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}.
 \]
 So twin primes are arbitrarily large.
 \end{proof}
@@ -1088,7 +1094,7 @@ The Lean proof of the last implication is theorem
 \]
 The routed-chain theorem exported by the project is
 \[
-  \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_routedChainRealization}.
+  \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}.
 \]
 
 \subsection{Formal objects used in Section 6}
@@ -1107,7 +1113,7 @@ The routed-chain theorem exported by the project is
 
   \FileEntry{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: supplies the no-tail theorem used by the main endpoint.
+    \item \Lean{no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}: supplies the no-tail theorem used by the main endpoint.
   \end{itemize}
 
   \FileEntry{TwinPrimeCertificate/Final.lean}
@@ -1181,11 +1187,11 @@ Congressus Numerantium, 7:51--70, 1973.
 
 The routed-chain endpoint is audited with
 \[
-\Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_routedChainRealization}.
+\Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}.
 \]
 In Lean this is checked with \Code{\#print axioms}.
 The theorem is parametric in a value of
-\Lean{RoutedChainRealizationCertificate}.  Lean reports only the standard axioms
+\Lean{GeneratedSuccessorRecoveryCertificate}.  Lean reports only the standard axioms
 used by ordinary classical finite-set reasoning:
 \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
   \item \Lean{propext}
@@ -1200,15 +1206,15 @@ hidden project axiom.
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{fromRoutedChainRealization}: builds the midpoint tail-induction certificate.
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedChainRealization}: the no-tail endpoint from the routed-chain realization certificate.
-    \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the theorem inspected by \Code{\#print axioms}.
+    \item \Lean{fromGeneratedSuccessorRecovery}: builds the midpoint tail-induction certificate.
+    \item \Lean{no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}: the no-tail endpoint from the routed-chain realization certificate.
+    \item \Lean{arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}: the theorem inspected by \Code{\#print axioms}.
   \end{itemize}
 
   \FileEntry{TwinPrimeCertificate/RoutedMPPMChainBridge.lean}
   \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
-    \item \Lean{RoutedChainRealizationCertificate}: the explicit certificate parameter of the audited theorem.
-    \item \Lean{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}: the finite cardinality contradiction consumed by the endpoint.
+    \item \Lean{RoutedBaseCaseRealizationCertificate}: the base-case realization field of the audited theorem.
+    \item \Lean{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}: the finite cardinality contradiction consumed by the endpoint.
   \end{itemize}
 \end{filelist}
 
@@ -1244,10 +1250,6 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
   DFI--Toth-shaped quadratic-root parent supply and proves that it implies the
   exact eligible recovery theorem.
 
-  \item \Code{TwinPrimeCertificate/FiniteSinkAvoidance.lean}: contains the
-  finite-sink, moving-window event-pressure, pair-pressure, terminal-slot, and
-  ancestor-bridge endpoint surfaces.
-
   \item \Code{TwinPrimeCertificate/RoutedMPPMChainCertificate.lean}: defines the
   Boolean checker for generated row witnesses, edge witnesses, direct event
   witnesses, full chains, strict event-id ordering, and shard-local counts.
@@ -1262,7 +1264,7 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
 
   \item \Code{TwinPrimeCertificate/RoutedMPPMChainBridge.lean}: converts the checked
   generated chain count into the finite predicted/actual event-set cardinality
-  contradiction, relative to \Lean{RoutedChainRealizationCertificate}.
+  contradiction, relative to \Lean{GeneratedSuccessorRecoveryCertificate}.
 
   \item \Code{TwinPrimeCertificate/TailInductionCertificate.lean}: packages the
   no-cofinal-tail result into the midpoint tail-induction interface and proves
@@ -1273,12 +1275,9 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
   certificate.
 
   \item \Code{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}: connects
-  \Lean{RoutedChainRealizationCertificate} to \Lean{Final.lean} and exposes the
+  \Lean{GeneratedSuccessorRecoveryCertificate} to \Lean{Final.lean} and exposes the
   routed-chain arbitrarily-large-twins theorem.
 
-  \item \Code{TwinPrimeCertificate/UniqueDescentEndpoint.lean}: exposes the
-  unique moving-window descent, injective descent, and moving-window
-  event-pressure theorem surfaces.
 \end{itemize}
 
 \subsection{C++ tools and certificates}
@@ -1469,45 +1468,9 @@ the objects; this appendix is the exhaustive name map for audit and navigation.
   \end{objectlist}
 \end{filelist}
 
-\subsection{Finite-sink and tail-induction surfaces}
+\subsection{Tail-induction surface}
 
 \begin{filelist}
-  \FileEntry{TwinPrimeCertificate/FiniteSinkAvoidance.lean}
-  \begin{objectlist}
-    \Obj{finite\_ancestor\_set\_misses\_arbitrarily\_large\_modFiveOnePrime}
-    \Obj{finite\_ancestor\_set\_not\_cofinal\_for\_modFiveOnePrimes}
-    \Obj{exists\_modFiveOnePrime\_batch\_after}
-    \Obj{FiniteSinkAvoidanceCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_finiteSinkAvoidance}
-    \Obj{arbitrarily\_large\_twins\_of\_finiteSinkAvoidance}
-    \Obj{ResidueFiniteSinkAvoidanceCertificate}
-    \Obj{ResidueFiniteSinkAvoidanceCertificate.toFiniteSinkAvoidance}
-    \Obj{no\_cofinalExceptionTail\_of\_residueFiniteSinkAvoidance}
-    \Obj{arbitrarily\_large\_twins\_of\_residueFiniteSinkAvoidance}
-    \Obj{TerminalSlotSinkCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotSink}
-    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotSink}
-    \Obj{slotAncestorUnion}
-    \Obj{TerminalSlotAncestorBridgeCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotAncestorBridge}
-    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotAncestorBridge}
-    \Obj{movingSlotAncestorUnion}
-    \Obj{MovingTerminalSlotAncestorBridgeCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_movingTerminalSlotAncestorBridge}
-    \Obj{arbitrarily\_large\_twins\_of\_movingTerminalSlotAncestorBridge}
-    \Obj{no\_cofinalExceptionTail\_of\_uniqueMovingWindowDescent}
-    \Obj{arbitrarily\_large\_twins\_of\_uniqueMovingWindowDescent}
-    \Obj{no\_cofinalExceptionTail\_of\_injectiveMovingWindowDescent}
-    \Obj{arbitrarily\_large\_twins\_of\_injectiveMovingWindowDescent}
-    \Obj{MovingWindowEventPressureCertificate}
-    \Obj{PairEventPressureCertificate}
-    \Obj{PairEventPressureCertificate.toMovingWindowEventPressure}
-    \Obj{no\_cofinalExceptionTail\_of\_movingWindowEventPressure}
-    \Obj{arbitrarily\_large\_twins\_of\_movingWindowEventPressure}
-    \Obj{no\_cofinalExceptionTail\_of\_pairEventPressure}
-    \Obj{arbitrarily\_large\_twins\_of\_pairEventPressure}
-  \end{objectlist}
-
   \FileEntry{TwinPrimeCertificate/TailInductionCertificate.lean}
   \begin{objectlist}
     \Obj{TailInductionCertificate}
@@ -1518,19 +1481,6 @@ the objects; this appendix is the exhaustive name map for audit and navigation.
     \Obj{no\_cofinalExceptionTail\_of\_tailInductionCertificate}
     \Obj{arbitrarily\_large\_twins\_of\_tailInductionCertificate}
   \end{objectlist}
-
-  \FileEntry{TwinPrimeCertificate/UniqueDescentEndpoint.lean}
-  \begin{objectlist}
-    \Obj{fromUniqueMovingWindowDescent}
-    \Obj{no\_cofinalExceptionTail\_of\_uniqueMovingWindowDescent}
-    \Obj{arbitrarily\_large\_twins\_of\_uniqueMovingWindowDescent}
-    \Obj{fromInjectiveMovingWindowDescent}
-    \Obj{no\_cofinalExceptionTail\_of\_injectiveMovingWindowDescent}
-    \Obj{arbitrarily\_large\_twins\_of\_injectiveMovingWindowDescent}
-    \Obj{fromMovingWindowEventPressure}
-    \Obj{no\_cofinalExceptionTail\_of\_movingWindowEventPressure}
-    \Obj{arbitrarily\_large\_twins\_of\_movingWindowEventPressure}
-  \end{objectlist}
 \end{filelist}
 
 \subsection{Generated-tail and routed-chain bridge files}
@@ -1538,35 +1488,10 @@ the objects; this appendix is the exhaustive name map for audit and navigation.
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}
   \begin{objectlist}
-    \Obj{GeneratedFinitePrefixRecoveryCertificate}
     \Obj{GeneratedSuccessorRecoveryCertificate}
-    \Obj{fromGeneratedFinitePrefixRecovery}
     \Obj{fromGeneratedSuccessorRecovery}
-    \Obj{no\_cofinalExceptionTail\_of\_generatedFinitePrefixRecovery}
-    \Obj{arbitrarily\_large\_twins\_of\_generatedFinitePrefixRecovery}
     \Obj{no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}
     \Obj{arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}
-    \Obj{fromRoutedChainRealization}
-    \Obj{no\_cofinalExceptionTail\_of\_routedChainRealization}
-    \Obj{arbitrarily\_large\_twins\_of\_routedChainRealization}
-    \Obj{fromModFiveSeedOverflow}
-    \Obj{no\_cofinalExceptionTail\_of\_modFiveSeedOverflow}
-    \Obj{arbitrarily\_large\_twins\_of\_modFiveSeedOverflow}
-    \Obj{fromModFiveGoodSeedOverflow}
-    \Obj{no\_cofinalExceptionTail\_of\_modFiveGoodSeedOverflow}
-    \Obj{arbitrarily\_large\_twins\_of\_modFiveGoodSeedOverflow}
-    \Obj{fromTerminalSlotSink}
-    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotSink}
-    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotSink}
-    \Obj{fromTerminalSlotAncestorBridge}
-    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotAncestorBridge}
-    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotAncestorBridge}
-    \Obj{fromMovingTerminalSlotAncestorBridge}
-    \Obj{no\_cofinalExceptionTail\_of\_movingTerminalSlotAncestorBridge}
-    \Obj{arbitrarily\_large\_twins\_of\_movingTerminalSlotAncestorBridge}
-    \Obj{fromUniqueMovingWindowDescent}
-    \Obj{no\_cofinalExceptionTail\_of\_uniqueMovingWindowDescent}
-    \Obj{arbitrarily\_large\_twins\_of\_uniqueMovingWindowDescent}
   \end{objectlist}
 
   \FileEntry{TwinPrimeCertificate/RoutedMPPMChainBridge.lean}
@@ -1587,12 +1512,6 @@ the objects; this appendix is the exhaustive name map for audit and navigation.
     \Obj{chain\_start\_exceptional\_of\_cofinalTail\_certificateVerifiedTo}
     \Obj{RoutedBaseCaseRealizationCertificate}
     \Obj{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}
-    \Obj{RoutedChainRealizationCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}
-    \Obj{ModFiveSeedOverflowCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_modFiveSeedOverflowCertificate}
-    \Obj{ModFiveGoodSeedOverflowCertificate}
-    \Obj{no\_cofinalExceptionTail\_of\_modFiveGoodSeedOverflowCertificate}
   \end{objectlist}
 \end{filelist}
 
@@ -1680,5 +1599,6 @@ the objects; this appendix is the exhaustive name map for audit and navigation.
 \end{filelist}
 
 \end{document}
+
 
 

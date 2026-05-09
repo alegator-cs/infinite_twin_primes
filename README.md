@@ -1,10 +1,7 @@
 # Twin Prime Certificate Endpoint
 
-This repository contains a Lean 4 endpoint for the finite-base MP/PM
-certificate route to arbitrarily large twin primes.
-
-The preferred public endpoint is the generated finite-base certificate plus a
-DFI/Toth-style successor-recovery input:
+This repository contains a Lean 4 endpoint for an inductive finite-base MP/PM
+certificate route to arbitrarily large twin primes:
 
 ```lean
 TwinPrimeCertificate.GeneratedTailInductionCertificate
@@ -56,31 +53,25 @@ generatedMPPMCard = 95568
 
 The remaining mathematical input is the successor-recovery theorem. The file
 `TwinPrimeCertificate/QuadraticRootSupply.lean` isolates the intended
-DFI/Toth-shaped route to that input: quadratic roots in the two MP/PM row
-families should provide arbitrarily late eligible parents for each lost event,
-which Lean then turns into exact shifted-tail recovery.
+DFI/Toth-shaped route to that input. In this formulation, shifting a tail start
+from `B` to `B + 1` may lose finitely many previously counted MP/PM events.
+Successor recovery says those lost events can be recovered after a finite
+lengthening of the later exceptional prefix. Lean proves that it is enough to
+give each lost event arbitrarily late eligible split-prime parents. Requesting
+two such parents past a bound gives multiplicity at least two; the
+multiplicity-two lemma then produces an exact recovery batch, and tail
+induction propagates the finite base contradiction to all later tail starts.
 
-The repository also contains a separate moving-window event-pressure surface in
-`TwinPrimeCertificate/UniqueDescentEndpoint.lean`, but that is not the preferred
-generated-certificate endpoint described here.
-
-## Important Import Distinction
+## Build Imports
 
 `lake build` builds the full Lean library, including the generated routed MP/PM
-shard tree.
-
-The lightweight aggregate module
+shard tree. The aggregate module
 
 ```lean
 import TwinPrimeCertificate
 ```
 
-does not import the generated shard tree. To inspect the preferred certificate
-endpoint, import:
-
-```lean
-import TwinPrimeCertificate.GeneratedTailInductionCertificate
-```
+imports the generated certificate endpoint.
 
 ## Main Lean Files
 
@@ -89,7 +80,6 @@ TwinPrimeCertificate/Core.lean
 TwinPrimeCertificate/RecursiveMPPMCertificate.lean
 TwinPrimeCertificate/DescentPressure.lean
 TwinPrimeCertificate/QuadraticRootSupply.lean
-TwinPrimeCertificate/FiniteSinkAvoidance.lean
 TwinPrimeCertificate/TailInductionCertificate.lean
 TwinPrimeCertificate/Final.lean
 TwinPrimeCertificate/GeneratedTailInductionCertificate.lean
@@ -123,7 +113,10 @@ The exploratory audit tool
 tools/audit_k2_forward.cpp
 ```
 
-is retained as research support for the successor-recovery program.
+is retained as research support for the successor-recovery program. Its runs
+showed that event multiplicity is already high at the finite certificate scale
+and tends to increase quickly in the tested ranges, which is why the
+multiplicity-two successor step is a plausible and deliberately weak target.
 
 ## Build
 
