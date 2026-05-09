@@ -5,6 +5,7 @@
 /tools/audit_k2_forward_wsl
 *.exe
 /certificates/tmp_*.json
+research/
 paper/*.aux
 paper/*.log
 paper/*.out

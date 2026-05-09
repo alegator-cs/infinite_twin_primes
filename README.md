@@ -51,16 +51,18 @@ cap
 generatedMPPMCard = 95568
 ```
 
-The remaining mathematical input is the successor-recovery theorem. The file
-`TwinPrimeCertificate/QuadraticRootSupply.lean` isolates the intended
-DFI/Toth-shaped route to that input. In this formulation, shifting a tail start
-from `B` to `B + 1` may lose finitely many previously counted MP/PM events.
-Successor recovery says those lost events can be recovered after a finite
-lengthening of the later exceptional prefix. Lean proves that it is enough to
-give each lost event arbitrarily late eligible split-prime parents. Requesting
-two such parents past a bound gives multiplicity at least two; the
-multiplicity-two lemma then produces an exact recovery batch, and tail
-induction propagates the finite base contradiction to all later tail starts.
+The successor-recovery step is supplied by a DFI/Toth-style corollary on roots
+of quadratic congruences to prime moduli. That analytic corollary is not
+formalized inside this Lean repository; it is cited as established mathematics
+and represented by the narrow interface in
+`TwinPrimeCertificate/QuadraticRootSupply.lean`. In this formulation, shifting a
+tail start from `B` to `B + 1` may lose finitely many previously counted MP/PM
+events. Successor recovery says those lost events can be recovered after a
+finite lengthening of the later exceptional prefix. Lean proves that it is
+enough to give each lost event arbitrarily late eligible split-prime parents.
+Requesting two such parents past a bound gives multiplicity at least two; the
+multiplicity-two lemma then produces an exact recovery batch, and tail induction
+propagates the finite base contradiction to all later tail starts.
 
 ## Build Imports
 

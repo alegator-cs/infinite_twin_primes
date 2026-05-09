@@ -63,7 +63,7 @@
   {\begin{center}\begin{minipage}{0.9\textwidth}\small\itshape\noindent}
   {\end{minipage}\end{center}}
 
-\title{Twin Prime Conditional Endpoint by Finite Contradiction}
+\title{Twin Prime Infinitude by Finite Contradiction}
 \author{alegator (coideated with GPT 5.4, 5.5)}
 \date{May 6, 2026}
 
@@ -75,16 +75,17 @@
 \textbf{Abstract}
 \end{center}
 \noindent
-We formalize the Lean endpoint for a finite-contradiction approach to twin
-prime infinitude.  The checked core proves that supposing the finiteness of
-twins forces a cofinal tail of midpoint-exceptional primes, and that any
-cofinal tail contradicts a finite-base MP/PM certificate plus successor-recovery certificate.  The
-remaining mathematical content is the pressure certificate itself: fresh
-eligible exceptional starts must create enough distinct composite-prime and
-prime-composite middle-pair events in the finite moving window.  The generated
-routed-chain shards provide audit data for this pressure picture, but the
-generic fresh-start and descent theorems alone do not yet prove fresh event
-pressure.
+We formalize a finite-contradiction proof endpoint for twin prime infinitude.
+The checked Lean core proves that bounded twin-prime midpoints force a cofinal
+tail of midpoint-exceptional primes, and that a finite-base routed MP/PM
+overflow certificate plus successor recovery rules out every such tail.  The
+finite base overflow is checked by generated Lean routed-chain shards:
+\(E_r=95569\) distinct predicted side-labeled middle-pair events cannot fit
+into \(E_a=95568\) actual events.  The successor-recovery step is supplied by a
+DFI--Toth-style corollary on roots of quadratic congruences to prime moduli;
+this analytic corollary is cited as established mathematics rather than
+formalized inside Lean.  Combining these pieces gives arbitrarily large twin
+primes.
 
 \section{Introduction}
 \noindent
@@ -104,10 +105,13 @@ Polymath8 to the unconditional bound \(H_1\le246\) \cite{Polymath8b2014}.
 This paper does not try to improve sieve weights or follow the bounded-gap
 \(b\le246\) route.  It uses midpoint rows and recursive MP/PM event descent.
 If twins were finite, a cofinal tail of exceptional primes would exist.  Lean
-checks that a suitable event-pressure theorem for that tail rules out the tail,
-and then gives arbitrarily large twin primes.  The present repository should be
-read as a precise conditional endpoint plus finite audit data, not as a closed
-unconditional proof.
+checks the finite-base overflow certificate and the inductive tail-elimination
+skeleton.  A DFI--Toth-style root-equidistribution corollary supplies the
+successor-recovery step.  With that cited analytic corollary plugged into the
+Lean interface, the cofinal tail is ruled out and Lean gives arbitrarily large
+twin primes.  The repository should be read as the Lean formalization of the
+finite and inductive endpoint, with the published analytic corollary occupying
+a library gap rather than a conjectural hypothesis.
 
 \clearpage
 \tableofcontents
@@ -298,8 +302,49 @@ inductive endpoint is represented in Lean by the explicit certificate type
   \Lean{GeneratedSuccessorRecoveryCertificate}.
 \]
 Its base field is the finite routed-chain realization certificate, and its
-successor field is the DFI--Toth-shaped recovery step.  Given such a
-certificate, Lean derives
+successor field is the DFI--Toth-shaped recovery step.
+
+The induction should be read concretely.  Suppose a cofinal exceptional tail
+begins at \(B\), and inspect a finite exceptional prefix
+\[
+  [B,B+n].
+\]
+Each prime seed in this prefix is exceptional, so each routed midpoint row in
+the certificate must be covered and must follow its recursive descent.  Such a
+descent cannot terminate at a prime still lying in \([B,\infty)\): by the
+cofinal-tail assumption, that prime is itself exceptional, so its own row is
+covered and the descent continues through the next smaller routed prime.  In
+the formal certificate, a stopped chain has crossed below the tail start and
+has landed in the finite side-labeled MP/PM target event universe.  For the
+base start \(B=\Lean{certificateVerifiedTo}\), the generated shards check that
+some finite prefix predicts \(E_r=95569\) distinct target events, while the
+finite target universe has only \(E_a=95568\) actual events.
+
+Now shift the hypothetical tail start from \(B\) to \(B+1\).  The shorter
+prefix \([B+1,B+n]\) inherits every routed chain from \([B,B+n]\) except the
+finitely many chains whose initial seed was \(B\).  Extending the prefix can
+only add routed chains and target events.  The only point needing input is
+recovery: for each event lost by omitting \(B\), there must be some later
+eligible exceptional seed whose descent reaches the same target event.  If this
+is true, then there is a finite \(n'>n\) such that the later prefix
+\[
+  [B+1,B+n']
+\]
+recovers the lost events and again predicts more events than the finite target
+universe can contain.
+
+The DFI--Toth-shaped root-supply corollary is used exactly here.  Each lost
+event determines a finite congruence and side label in one of the two quadratic
+row families.  The analytic root-supply theorem gives arbitrarily late
+eligible split-prime parents for that event.  Asking for two parents past a
+chosen bound gives multiplicity at least two, so the Lean multiplicity lemma can
+select a genuinely later recovery parent rather than reusing the discarded
+one.  Taking the maximum of the finitely many recovery parents gives the
+required \(n'\).  This is the successor-recovery field of
+\(\Lean{GeneratedSuccessorRecoveryCertificate}\), and it is the mechanism by
+which the finite base contradiction propagates to every later tail start.
+
+Given such a certificate, Lean derives
 \[
   \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}
 \]
@@ -337,7 +382,7 @@ The larger observed no-exception gap is not a dependency of the final Lean
 endpoint.  It remains useful motivation for why this finite contradiction was
 searched for at the threshold used by the generated routed-chain certificate.
 
-\subsection{Formal object directory for Section 1}
+\subsection{Formal object directory for Section 2}
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/Core.lean}
@@ -446,7 +491,7 @@ no twin-prime pair.  Earlier searches also used divisor formulations of the
 same condition, but the reduced Lean endpoint works directly with the
 midpoint-row predicate above.
 
-\subsection{Formal objects used in Section 2}
+\subsection{Formal objects used in Section 3}
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/Core.lean}
@@ -514,7 +559,22 @@ This is Lean theorem
   \Lean{boundedTwinMids\_forces\_cofinalTail\_midpointExceptionalPrime}.
 \]
 
-\subsection{Formal objects used in Section 3}
+The word ``cofinal'' is important.  The conclusion is not merely that
+infinitely many later primes are exceptional.  It says that after the bound
+\(B\), every prime is exceptional.  If
+\[
+  p_0<p_1<p_2<\cdots
+\]
+is the increasing sequence of primes greater than \(B\), then
+\[
+  p_i\ \text{is midpoint-exceptional for every }i.
+\]
+So, in the later induction, a finite prefix of the tail means a block of
+consecutive primes in this ordered prime sequence, not necessarily consecutive
+integers.  This is exactly the input that makes recursive descent continue
+whenever it reaches another prime still above the tail start.
+
+\subsection{Formal objects used in Section 4}
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/Core.lean}
@@ -621,7 +681,7 @@ gaps, is
   \Lean{no\_firstException\_mono\_forward}.
 \]
 
-\subsection{Formal objects used in Section 4}
+\subsection{Formal objects used in Section 5}
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/Core.lean}
@@ -939,7 +999,7 @@ The only project-specific endpoint certificate needed to derive it is
   \Lean{GeneratedSuccessorRecoveryCertificate}.
 \]
 
-\subsection{Formal objects used in Section 5}
+\subsection{Formal objects used in Section 6}
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/Core.lean}
@@ -1097,7 +1157,7 @@ The routed-chain theorem exported by the project is
   \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}.
 \]
 
-\subsection{Formal objects used in Section 6}
+\subsection{Formal objects used in Section 7}
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/Core.lean}
@@ -1304,9 +1364,6 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
   PDF output from the TeX source.
 
   \item \Code{README.md}: command-oriented repository summary and regeneration notes.
-
-  \item \Code{research/pressure\_overflow\_program.md}: running research log for
-  the pressure, recovery, and DFI--Toth root-supply route.
 
   \item \Code{lakefile.toml}: Lean package definition for \Code{TwinPrimeCertificate}.
 
