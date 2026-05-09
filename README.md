@@ -1,6 +1,6 @@
 # Twin Prime Certificate Endpoint
 
-This repository contains a Lean 4 endpoint for the moving-window MP/PM
+This repository contains a Lean 4 endpoint for the finite-base MP/PM
 certificate route to arbitrarily large twin primes.
 
 The preferred public endpoint is the generated finite-base certificate plus a
@@ -59,6 +59,10 @@ The remaining mathematical input is the successor-recovery theorem. The file
 DFI/Toth-shaped route to that input: quadratic roots in the two MP/PM row
 families should provide arbitrarily late eligible parents for each lost event,
 which Lean then turns into exact shifted-tail recovery.
+
+The repository also contains a separate moving-window event-pressure surface in
+`TwinPrimeCertificate/UniqueDescentEndpoint.lean`, but that is not the preferred
+generated-certificate endpoint described here.
 
 ## Important Import Distinction
 
