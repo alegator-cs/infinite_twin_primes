@@ -296,7 +296,7 @@ recursive finite computation, and let
 \]
 be the size of the actual generated MP/PM event set.  Since \(E_r>E_a\), a
 cofinal exceptional tail realizing those predicted events is impossible.  The
-generated C++ certificate emits the arithmetic route chains.  The full
+generated finite certificate emits the arithmetic route chains.  The full
 inductive endpoint is represented in Lean by the explicit certificate type
 \[
   \Lean{GeneratedSuccessorRecoveryCertificate}.
@@ -449,7 +449,7 @@ For \(r,h\in\Nat\), define
   \quad:\Longleftrightarrow\quad
   1\le h\ \wedge\ h<r.
 \]
-This is Lean definition
+Lean names this predicate
 \[
   \Lean{MidpointRowIndex}.
 \]
@@ -466,7 +466,7 @@ Define
   \quad:\Longleftrightarrow\quad
   \Prime(rh-1)\ \wedge\ \Prime(rh+1).
 \]
-These are Lean definitions
+Lean names these two objects
 \[
   \Lean{MidpointRowMidpoint},\qquad \Lean{MidpointTwinWitnessAt}.
 \]
@@ -480,7 +480,7 @@ A prime \(r\) is a midpoint-exceptional prime, or simply an exception, if
   \forall h,\ (1\le h<r)\Rightarrow
     \neg\operatorname{MidpointTwinWitnessAt}(r,h).
 \]
-In Lean this is
+Lean names this predicate
 \[
   \Lean{MidpointExceptionalPrime}.
 \]
@@ -508,13 +508,13 @@ midpoint-row predicate above.
 \noindent
 
 \begin{definition}[Bounded twin midpoints]
-The predicate \(\operatorname{BoundedTwinMids}\) says that there exists a bound
+Say that twin midpoints are bounded if there exists a bound
 \(M\) such that no midpoint \(m>M\) has both \(m-1\) and \(m+1\) prime:
 \[
   \exists M,\ \forall m>M,\ 
     \neg(\Prime(m-1)\wedge\Prime(m+1)).
 \]
-This is Lean definition
+Lean names this predicate
 \[
   \Lean{BoundedTwinMids}.
 \]
@@ -527,7 +527,7 @@ The target theorem is
   \quad:\Longleftrightarrow\quad
   \forall N,\ \exists p,\ N\le p\wedge\Prime(p)\wedge\Prime(p+2).
 \]
-This is Lean definition
+Lean names this target predicate
 \[
   \Lean{ArbitrarilyLargeTwins}.
 \]
@@ -554,7 +554,7 @@ So \(M<r\le m\), so \(M<m\).  By the defining property of \(M\), the pair
 twin pair, so \(r\) is a \(\operatorname{MidpointExceptionalPrime}\).
 \end{proof}
 
-This is Lean theorem
+Lean formalizes this lemma as
 \[
   \Lean{boundedTwinMids\_forces\_cofinalTail\_midpointExceptionalPrime}.
 \]
@@ -626,7 +626,7 @@ consists of a prime \(r\) such that:
   \]
   satisfies \(E(s)\).
 \end{enumerate}
-This is Lean structure
+Lean names this structure
 \[
   \Lean{FirstExceptionAfterGap}.
 \]
@@ -651,7 +651,7 @@ satisfies \(E(s)\).  So \(R\) is the first exceptional prime after
 \(\gamma\)'s verified bound.
 \end{proof}
 
-This is Lean theorem
+Lean formalizes this lemma as
 \[
   \Lean{cofinalTail\_gives\_firstExceptionAfterGap}.
 \]
@@ -671,7 +671,7 @@ prime above \(\gamma_2.\operatorname{verifiedTo}\), so also above
 first exception after \(\gamma_1\).
 \end{proof}
 
-This is Lean theorem
+Lean formalizes this monotonicity lemma as
 \[
   \Lean{firstException\_mono\_backward}.
 \]
@@ -745,7 +745,7 @@ and Lean checks
 \[
   E_a<E_r.
 \]
-The Lean theorem name for the arithmetic inequality is
+Lean records this arithmetic inequality as
 \[
   \Lean{routedChainPredicted\_card\_exceeds\_actual}.
 \]
@@ -760,7 +760,8 @@ There is no cofinal tail of midpoint-exceptional primes:
 \end{certificate}
 
 \begin{proof}[Generated certificate proof]
-The C++ program \Code{generate\_routed\_mppm\_chain\_certificate.cpp} generates
+The route-chain generator \Code{generate\_routed\_mppm\_chain\_certificate.cpp}
+generates
 explicit recursive MP/PM route-chain witnesses from the generated MP/PM block.
 At start split prime \(191281\), the generated reachable closure contains
 \(95569\) distinct side-labeled predicted MP/PM events.  The generated finite
@@ -815,7 +816,7 @@ encoded by
 Here \(s=0\) is the MP-side label and \(s=1\) is the PM-side label.  The
 encoding is just parity bookkeeping: the side label is recovered from the
 parity of \(2u+s\), and the coordinate \(u\) is recovered by integer division
-by \(2\).  In Lean this is the function
+by \(2\).  Lean names this encoding function
 \[
   \Lean{encodeSideEvent}.
 \]
@@ -840,24 +841,32 @@ The generated data gives
   |A|=95568.
 \]
 
-\subsubsection{Split primes and rows}
+\subsubsection{Split primes and quadratic rows}
 
-For a prime \(p\), the predicate \Code{leg5(p)} tests whether \(5\) is a
-quadratic residue modulo \(p\).  If not, the prime has no rows.
+Call an odd prime \(p\) \emph{split} if \(5\) is a quadratic residue modulo
+\(p\).  This is the natural splitting condition for the two quadratic row
+families, because both row polynomials have discriminant \(5\):
+\[
+  u(u+3)+1=u^2+3u+1,
+  \qquad
+  (u+1)(u+4)+1=u^2+5u+5.
+\]
+If \(p\) is not split, neither quadratic has a row root modulo \(p\), so the
+finite descent algorithm has no row to record at \(p\).
 
-If \(5\) is a quadratic residue modulo \(p\), the function
-\Code{sqrt5\_mod\_prime(p)} returns the two square roots of \(5\) modulo
-\(p\).  This is computed either by the \(p\equiv 3\pmod 4\) formula or by
-Tonelli-Shanks \cite{Shanks1973}.  Both branches are standard algorithms
+For a split prime, choose the two square roots of \(5\) modulo \(p\).  These
+roots give the two roots of each row polynomial by the quadratic formula.  The
+generator computes the square roots either by the \(p\equiv3\pmod4\) formula or
+by Tonelli--Shanks \cite{Shanks1973}.  Both branches are standard algorithms
 satisfying:
 \[
-  s\in\Code{sqrt5\_mod\_prime(p)}
+  s\ \text{is one of the computed square roots}
   \quad\Longleftrightarrow\quad
   s^2\equiv 5\pmod p.
 \]
 
-For each such \(s\), the algorithm builds two row types.
-The right row solves
+For each such square root \(s\), the algorithm builds two row types.  The
+right row solves
 \[
   (u+1)(u+4)+1\equiv 0\pmod p,
 \]
@@ -865,8 +874,8 @@ and the left row solves
 \[
   u(u+3)+1\equiv 0\pmod p.
 \]
-The formulas in \Code{rows\_for(p)} are exactly the quadratic formula for
-these two congruences.  Whenever the computed midpoint is divisible by \(p\),
+The retained row formulas are exactly the quadratic formula for these two
+congruences.  Whenever the computed midpoint is divisible by \(p\),
 the algorithm sets
 \[
   h=\frac{(u+1)(u+4)+1}{p}
@@ -884,7 +893,10 @@ records the five adjacent slots
   u,u+1,u+2,u+3,u+4.
 \]
 
-Lean checks the residue and row identities used here as
+The implementation names are deliberately literal: \Code{leg5(p)} is the split
+prime test, \Code{sqrt5\_mod\_prime(p)} computes the two square roots of \(5\),
+and \Code{rows\_for(p)} enumerates the retained left and right rows.  Lean
+checks the residue and row identities used here as
 \[
 \begin{gathered}
   \Lean{left\_row\_residue5\_identity},\qquad
@@ -894,19 +906,24 @@ Lean checks the residue and row identities used here as
 \end{gathered}
 \]
 
-\subsubsection{Target events}
+\subsubsection{Finite target-event hits}
 
-The function \Code{target\_events\_at(p)} maps rows at \(p\) into the finite
-event universe \(U\).  If \(p<X\), the row coordinate \(u\) is lifted through
-the congruence class
+For a split prime \(p\), each retained row gives a residue class of possible
+base coordinates modulo \(p\).  The finite target-event hit set at \(p\) is
+obtained by intersecting those row residue classes with the finite event
+universe \(U\).  If \(p<X\), a row coordinate \(u\) is lifted through the
+congruence class
 \[
   u,\ u+p,\ u+2p,\ldots <X.
 \]
 For each lifted \(u\), the side-labeled events \((u,0)\) and \((u,1)\) are
 looked up in \(U\).  If present, their integer identifiers are inserted.  The
-result is sorted and deduplicated.  So \Code{target\_events\_at(p)}
-returns exactly the finite set of generated Base-side events hit directly by
-rows at \(p\).
+result is sorted and deduplicated.
+
+In implementation terms, this finite intersection is
+\Code{target\_events\_at(p)}.  It returns exactly the generated Base-side
+events hit directly by quadratic rows at \(p\); recursive descent then adds the
+events reached through smaller descended split primes.
 
 \subsubsection{Descended prime edges and recursive closure}
 
@@ -935,26 +952,33 @@ prime size:
   R(p)=T(p)\cup\bigcup_{q\in D(p)}R(q),
 \]
 where \(T(p)\) is the direct target-event set and \(D(p)\) is the finite
-descended prime set.  The function \Code{reachable\_events(p)} implements
-exactly this recursion, using memoization.  Memoization does not alter the
-mathematical value; it only caches already-computed \(R(q)\).  Since every
-descended prime satisfies \(q<p\), the recursion terminates.
+descended prime set.  The generator implements this recursion with memoization.
+Memoization does not alter the mathematical value; it only caches
+already-computed \(R(q)\).  Since every descended prime satisfies \(q<p\), the
+recursion terminates.  In the C++ source, this recursive closure function is
+\Code{reachable\_events(p)}.
 
 \subsubsection{Primality and factorization subroutines}
 
-The C++ certificate uses deterministic 64-bit Miller-Rabin for primality
-testing and Pollard-Rho for prime factorization.
+The finite certificate uses deterministic 64-bit Miller--Rabin for primality
+testing and Pollard--Rho for prime factorization.
 
 \subsubsection{Route-chain generation correctness}
 
-The main generator is invoked with start split prime \(R=191281\).  It computes
+The route-chain generator is invoked with start split prime \(R=191281\).  It
+computes the recursive target-event closure from \(R\),
 \[
-  R(R)=\Code{reachable\_events(R)}
+  \mathcal R(R)=T(R)\cup\bigcup_{q\in D(R)}\mathcal R(q),
 \]
-and emits one checked chain witness for each event identifier in the finite set
+and emits one checked chain witness for each event identifier in the finite
+predicted event set
 \[
   P_{\operatorname{seen}}.
 \]
+The C++ source names this recursive closure routine
+\Code{reachable\_events(R)}.  The mathematical object is the finite set
+\(\mathcal R(R)\); the code name only records how the generator computes it.
+
 The generated index sums the shard-local chain counts, so
 \[
   |P_{\operatorname{seen}}|,
@@ -1071,6 +1095,46 @@ overflow after shifting a hypothetical cofinal tail start from \(B\) to
 \(B+1\), the proof needs a recovery principle: every event lost by removing
 the first seed must have arbitrarily late eligible split-prime parents.
 
+Here is the recovery problem in concrete terms.  An MP/PM event is a
+side-labeled target coordinate, for example
+\[
+  e=(u,\operatorname{MP})
+  \quad\text{or}\quad
+  e=(u,\operatorname{PM}).
+\]
+Saying that a split prime \(p\) is a \emph{parent} of \(e\) means that one of
+the two quadratic row families has a legal row at \(p\),
+\[
+  L(a)=p h
+  \quad\text{or}\quad
+  R(a)=p h,
+  \qquad 1\le h<p,
+\]
+and that the recursive descent from this row reaches the event \(e\).  In the
+finite generator, this is exactly what a routed-chain witness records.  In the
+successor step, if shifting the tail start from \(B\) to \(B+1\) removes a seed
+that previously supplied \(e\), it is enough to find a later parent \(p\) of
+the same event.  Since a cofinal tail makes every sufficiently large prime
+exceptional, that later parent is also exceptional, so its routed row is
+realized and \(e\) is recovered.
+
+For a simple model example, suppose the lost event is the MP event at coordinate
+\(u_0\).  A left-row parent asks for a split prime \(p\) and a row coordinate
+\(a\) satisfying
+\[
+  a(a+3)+1=p h,\qquad 1\le h<p,
+\]
+with \(a\) in one of the finite residue classes that the route certificate
+knows descends to \(u_0\).  A right-row parent is the analogous condition
+\[
+  (a+1)(a+4)+1=p h,\qquad 1\le h<p.
+\]
+The finite residue class is the certificate's way of saying: if a legal row
+starts here, the already-checked descent chain reaches the desired target
+event.  The analytic theorem supplies arbitrarily large split primes with row
+roots in that residue class, while the generated route certificate supplies the
+finite descent from such a row to \(e\).
+
 The row polynomials
 \[
   L(u)=u(u+3)+1,\qquad R(u)=(u+1)(u+4)+1
@@ -1093,10 +1157,18 @@ proved from the analytic literature:
   \Lean{QuadraticRootParentSupply}.
 \]
 From this corollary Lean proves the full finite recovery step.  The key point
-is simple: if one arbitrarily late parent exists after every bound, then ask
-once after \(N\) and once after the first parent.  This gives two distinct
-eligible parents, which is exactly the multiplicity-two hypothesis used by
-the shifted-tail recovery theorem.
+is simple.  If one arbitrarily late parent exists after every bound, then first
+ask for a parent after the current prefix bound \(N\).  Call it \(p_1\).  Then
+ask again for a parent after \(p_1\).  Call it \(p_2\).  The strict inequalities
+\[
+  N<p_1<p_2
+\]
+make the two parents distinct and later than the shifted prefix start.  So the
+event has multiplicity at least two among later eligible parents.  The Lean
+multiplicity-two theorem then selects a recovery parent that was not the seed
+discarded by shifting \(B\) to \(B+1\).  Doing this for each of the finitely
+many lost events and taking the maximum of the chosen parents gives a finite
+prefix extension that restores all lost events at once.
 
 \begin{filelist}
   \FileEntry{TwinPrimeCertificate/QuadraticRootSupply.lean}
@@ -1121,38 +1193,48 @@ the shifted-tail recovery theorem.
 \section{Main theorem}
 \noindent
 
-\begin{theorem}[Routed-chain certificate implies arbitrarily large twin primes]
-Given a value of \(\Lean{GeneratedSuccessorRecoveryCertificate}\),
+\begin{theorem}[Generated finite-base certificate implies arbitrarily large twins]
+Assume the generated finite-base overflow certificate and the successor-recovery
+certificate described above.  Then
 \[
   \forall N,\ \exists p,\ N\le p\wedge\Prime(p)\wedge\Prime(p+2).
 \]
 \end{theorem}
 
 \begin{proof}
-Let \(\mathcal C\) be the routed-chain realization certificate.
+Let \(\mathcal C\) be the combined finite-base and successor-recovery
+certificate.
 Assume, for contradiction, that twin primes are not arbitrarily large.  Then
 there is some \(N\) such that no prime \(p\ge N\) has \(p+2\) prime.  This
-implies \(\operatorname{BoundedTwinMids}\): take \(M=N+1\).  If
+gives bounded twin midpoints: take \(M=N+1\).  If
 \[
   \Prime(m-1)\wedge\Prime(m+1)
 \]
 held for some \(m>M\), then \(p=m-1\) would satisfy \(p\ge N\) and
 \(\Prime(p)\wedge\Prime(p+2)\), contradiction.
 
-By the bounded-midpoint lemma, \(\operatorname{BoundedTwinMids}\) gives a
-cofinal tail of \(\operatorname{MidpointExceptionalPrime}\) primes.  This
-contradicts the generated certificate theorem
+By the bounded-midpoint lemma, bounded twin midpoints give a cofinal tail of
+midpoint-exceptional primes.  The generated finite-base certificate rules out
+the base tail start, and the successor-recovery certificate propagates that
+contradiction to every later possible tail start.  So no cofinal exceptional
+tail exists, contradicting bounded twin midpoints.  Twin primes are arbitrarily
+large.
+\end{proof}
+
+The corresponding Lean certificate type is
+\[
+  \Lean{GeneratedSuccessorRecoveryCertificate}.
+\]
+The Lean proof that the certificate rules out cofinal exceptional tails is
 \[
   \Lean{GeneratedTailInductionCertificate.no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}.
 \]
-So twin primes are arbitrarily large.
-\end{proof}
-
-The Lean proof of the last implication is theorem
+The Lean proof of the final implication from no cofinal exceptional tail to
+arbitrarily large twins is theorem
 \[
   \Lean{arbitrarily\_large\_twins\_of\_no\_cofinalExceptionTail}.
 \]
-The routed-chain theorem exported by the project is
+The exported project endpoint is
 \[
   \Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}.
 \]
