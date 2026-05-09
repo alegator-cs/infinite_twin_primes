@@ -1,94 +1,82 @@
-# Twin Prime Conditional Endpoint
+# Twin Prime Certificate Endpoint
 
-This repository contains a minimal Lean endpoint for several closely related
-moving-window and event-pressure proof shapes. The default build no longer
-imports the generated routed MP/PM shard tree.
+This repository contains a Lean 4 endpoint for the moving-window MP/PM
+certificate route to arbitrarily large twin primes.
 
-The strongest default-facing endpoint is conditional on a concrete
-moving-window event-pressure certificate:
-
-```lean
-TwinPrimeCertificate.UniqueDescentEndpoint
-  .arbitrarily_large_twins_of_movingWindowEventPressure
-```
-
-Its certificate requires two concrete facts:
+The preferred public endpoint is the generated finite-base certificate plus a
+DFI/Toth-style successor-recovery input:
 
 ```lean
-structure MovingWindowEventPressureCertificate where
-  threshold : Nat
-  slots : Nat -> Finset Nat
-  ProducedEvents : Nat -> Nat -> Finset Nat
-  distinct_event_pressure :
-    forall B N,
-      exists seeds : Finset Nat,
-        (slots B).card < (seeds.biUnion (ProducedEvents B)).card /\
-          forall p, p ∈ seeds ->
-            N < p /\ threshold < p /\ ModFiveOnePrime p
-  produced_events_land_in_window :
-    forall B p event,
-      B < p ->
-        threshold < p ->
-          ModFiveOnePrime p ->
-          MidpointExceptionalPrime p ->
-          event ∈ ProducedEvents B p ->
-          event ∈ slots B
+TwinPrimeCertificate.GeneratedTailInductionCertificate
+  .arbitrarily_large_twins_of_generatedSuccessorRecovery
 ```
+
+The theorem takes one explicit certificate:
+
+```lean
+structure GeneratedSuccessorRecoveryCertificate where
+  base : RoutedBaseCaseRealizationCertificate
+  successor_recovery :
+    forall B,
+      certificateVerifiedTo <= B ->
+        CofinalTailContradicts MidpointExceptionalPrime B ->
+          CofinalTailContradicts MidpointExceptionalPrime (B + 1)
+```
+
+This is the route we currently mean by "the certificate approach".
+
+## Proof Shape
 
 The proof path is:
 
-1. A finite-twins hypothesis gives a cofinal tail of midpoint-exceptional
-   primes.
-2. The event-pressure certificate supplies, after any bound, finitely many
-   eligible seeds whose produced event union is larger than the finite slot
-   window.
-3. The cofinal tail makes all sufficiently large selected seeds
-   midpoint-exceptional.
-4. The landing theorem sends every produced event into `slots B`.
-5. This gives a strict cardinality contradiction.
-6. No cofinal exceptional tail exists, so twin primes are arbitrarily large.
+1. If twin-prime midpoints were bounded, then midpoint-exceptional primes would
+   form a cofinal tail.
+2. The generated routed MP/PM shard certificate proves the finite base overflow
+   at `certificateVerifiedTo`.
+3. The successor-recovery input says that once a cofinal tail beginning at `B`
+   is contradictory, the shifted tail beginning at `B + 1` is contradictory
+   too.
+4. Tail induction rules out every possible cofinal exceptional tail.
+5. No cofinal exceptional tail implies unbounded twin-prime midpoints.
+6. Unbounded twin-prime midpoints imply arbitrarily large twin primes.
 
-The remaining mathematical content is exactly the event-pressure certificate:
-fresh eligible starts must create enough distinct MP/PM events in the moving
-finite window. Lean also exposes a unique-descent/finite-ancestor endpoint, but
-that endpoint is stronger than currently justified by the generic descent
-theorem because fresh starts alone do not rule out event collisions.
-
-## DFI/Toth Root-Supply Bridge
-
-The file `TwinPrimeCertificate/QuadraticRootSupply.lean` isolates the weakest
-analytic input that currently looks capable of closing the successor-recovery
-gap. It does not add an axiom. Instead it proves, in Lean, that the following
-peer-reviewed-theorem-shaped corollary is enough:
+The concrete base certificate is checked inside Lean by the generated shard
+tree:
 
 ```lean
-structure QuadraticRootParentSupply
-    (events : Finset Event)
-    (ProducedEvents : Nat -> Finset Event) where
-  root_after : ...
-  root_produces : ...
+TwinPrimeCertificate.GeneratedRoutedMPPMChains.Index
 ```
 
-Informally, `root_after` says that for every lost finite event and every lower
-bound `N`, there is a later split prime `p ≡ 1 [MOD 5]` with a legal root of
-one of the two quadratic row polynomials in the required residue class. This is
-exactly the Duke--Friedlander--Iwaniec / Toth root-equidistribution input, not
-plain Dirichlet in arithmetic progressions.
-
-Lean then proves:
+The shard tree verifies 95,569 routed MP/PM chain witnesses against the finite
+cap
 
 ```lean
-exists_exact_eligible_recovery_batch_after_shift_of_quadraticRootSupply
+generatedMPPMCard = 95568
 ```
 
-So the current honest closure point is:
+The remaining mathematical input is the successor-recovery theorem. The file
+`TwinPrimeCertificate/QuadraticRootSupply.lean` isolates the intended
+DFI/Toth-shaped route to that input: quadratic roots in the two MP/PM row
+families should provide arbitrarily late eligible parents for each lost event,
+which Lean then turns into exact shifted-tail recovery.
 
-1. DFI/Toth-style root supply gives arbitrarily late parents for each lost
-   event.
-2. Lean turns one-parent-after-any-bound into multiplicity two.
-3. Lean turns multiplicity two into exact shifted-tail event recovery.
-4. The existing tail-induction endpoint consumes the corresponding successor
-   recovery certificate.
+## Important Import Distinction
+
+`lake build` builds the full Lean library, including the generated routed MP/PM
+shard tree.
+
+The lightweight aggregate module
+
+```lean
+import TwinPrimeCertificate
+```
+
+does not import the generated shard tree. To inspect the preferred certificate
+endpoint, import:
+
+```lean
+import TwinPrimeCertificate.GeneratedTailInductionCertificate
+```
 
 ## Main Lean Files
 
@@ -100,12 +88,38 @@ TwinPrimeCertificate/QuadraticRootSupply.lean
 TwinPrimeCertificate/FiniteSinkAvoidance.lean
 TwinPrimeCertificate/TailInductionCertificate.lean
 TwinPrimeCertificate/Final.lean
-TwinPrimeCertificate/UniqueDescentEndpoint.lean
+TwinPrimeCertificate/GeneratedTailInductionCertificate.lean
+TwinPrimeCertificate/RoutedMPPMChainCertificate.lean
+TwinPrimeCertificate/RoutedMPPMChainBridge.lean
+TwinPrimeCertificate/GeneratedRoutedMPPMChains/Index.lean
+TwinPrimeCertificate/GeneratedRoutedMPPMChains/ShardNNN.lean
 TwinPrimeCertificate.lean
 ```
 
-The older generated routed-chain files remain in the repository as optional
-audit material, but they are not imported by `TwinPrimeCertificate.lean`.
+## Tools and Certificates
+
+The C++ generator
+
+```text
+tools/generate_routed_mppm_chain_certificate.cpp
+```
+
+emits the Lean shard files in
+
+```text
+TwinPrimeCertificate/GeneratedRoutedMPPMChains/
+```
+
+The C++ program is tooling. The certificate actually consumed by the proof is
+the generated Lean code, which Lake checks.
+
+The exploratory audit tool
+
+```text
+tools/audit_k2_forward.cpp
+```
+
+is retained as research support for the successor-recovery program.
 
 ## Build
 
@@ -113,33 +127,40 @@ audit material, but they are not imported by `TwinPrimeCertificate.lean`.
 lake build
 ```
 
-## Checks
+Expected result:
 
-Placeholder scan for the default endpoint files:
+```text
+Build completed successfully
+```
+
+## Placeholder Scan
 
 ```bash
-rg -n "\b(sorry|admit|axiom|constant)\b" \
-  TwinPrimeCertificate.lean \
-  TwinPrimeCertificate/Core.lean \
-  TwinPrimeCertificate/RecursiveMPPMCertificate.lean \
-  TwinPrimeCertificate/DescentPressure.lean \
-  TwinPrimeCertificate/QuadraticRootSupply.lean \
-  TwinPrimeCertificate/FiniteSinkAvoidance.lean \
-  TwinPrimeCertificate/TailInductionCertificate.lean \
-  TwinPrimeCertificate/Final.lean \
-  TwinPrimeCertificate/UniqueDescentEndpoint.lean
+rg -n "\b(sorry|admit|axiom|constant)\b" TwinPrimeCertificate -g "*.lean"
 ```
 
 Expected output: no matches.
 
-Axiom check:
+## Axiom Check
 
 ```bash
 lake env lean --stdin <<'EOF'
-import TwinPrimeCertificate.UniqueDescentEndpoint
-#print axioms TwinPrimeCertificate.UniqueDescentEndpoint.arbitrarily_large_twins_of_movingWindowEventPressure
+import TwinPrimeCertificate.GeneratedTailInductionCertificate
+#print axioms TwinPrimeCertificate.GeneratedTailInductionCertificate.arbitrarily_large_twins_of_generatedSuccessorRecovery
 EOF
 ```
 
 Expected project-specific axioms: none. Standard Lean axioms such as
 `propext`, `Classical.choice`, and `Quot.sound` may appear.
+
+## Paper
+
+The paper source and rendered PDF are:
+
+```text
+paper/twin_prime_certificate_endpoint.tex
+paper/twin_prime_certificate_endpoint.pdf
+```
+
+The paper includes a Lean object index so a reader can match the prose proof to
+the formal declarations.
