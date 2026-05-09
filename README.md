@@ -120,6 +120,29 @@ showed that event multiplicity is already high at the finite certificate scale
 and tends to increase quickly in the tested ranges, which is why the
 multiplicity-two successor step is a plausible and deliberately weak target.
 
+The midpoint-exception audit tool
+
+```text
+tools/check_midpoint_exceptions.cpp
+```
+
+directly checks the row definition: for each prime `r <= N`, it searches
+`1 <= h < r` for a twin pair `r*h - 1`, `r*h + 1`. By default it checks the
+known exception list
+
+```text
+2, 5, 11, 13, 31, 37, 53, 61, 73, 79, 97, 127
+```
+
+and is intended to audit the larger empirical claim that there are no further
+midpoint-exceptional primes through `10^9`.
+
+From PowerShell with WSL:
+
+```powershell
+wsl.exe bash -lc 'cd /mnt/c/Users/Oleg/source/codex/lean/prime_sunit_wheel/twin_prime_external_certificate_endpoint && g++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/check_midpoint_exceptions.cpp -o tools/check_midpoint_exceptions && ./tools/check_midpoint_exceptions --limit 1000000000 --progress 1000000'
+```
+
 ## Build
 
 ```bash

@@ -148,6 +148,16 @@ was tested that the next gap is at least
 \[
   V_0=191264
 \]
+for the finite certificate.  The midpoint-exceptional primes found up to the
+larger checked bound \(10^9\) are
+\[
+  r_e\in\{2,5,11,13,31,37,53,61,73,79,97,127\}.
+\]
+The audit program \Code{tools/check\_midpoint\_exceptions.cpp} recomputes this
+list directly from the midpoint-row definition: for each prime \(r\le N\), it
+searches \(1\le h<r\) for a twin pair \(rh-1,rh+1\), reports \(r\) exactly when
+no such \(h\) exists, and checks the resulting list against the displayed
+exception list.
 
 \subsection{Split primes and recursive MP/PM closure}
 
@@ -1432,6 +1442,12 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
 
   \item \Code{tools/audit\_k2\_forward.cpp}: exploratory C++ audit tool for
   sliding-window event recovery, multiplicity, and shifted-tail experiments.
+
+  \item \Code{tools/check\_midpoint\_exceptions.cpp}: direct C++ audit tool for
+  the midpoint-exception list.  It checks primes \(r\le N\), searches each
+  midpoint row \(M_r\) for a twin pair, and verifies that the only exceptions
+  through the requested bound are
+  \(\{2,5,11,13,31,37,53,61,73,79,97,127\}\).
 
   \item \Code{certificates/generated\_mppm\_pressure\_certificate.json}: finite
   generated Base/MP/PM input block consumed by the routed-chain generator.
