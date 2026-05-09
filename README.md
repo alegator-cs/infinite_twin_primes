@@ -1,98 +1,145 @@
-# Twin Prime External Certificate Endpoint
+# Twin Prime Conditional Endpoint
 
-This repository contains the Lean endpoint and external certificate tooling for the finite-contradiction proof shape described in `paper/twin_prime_external_certificate_endpoint.pdf`.
+This repository contains a minimal Lean endpoint for several closely related
+moving-window and event-pressure proof shapes. The default build no longer
+imports the generated routed MP/PM shard tree.
 
-Lean proves the endpoint from one external C++ route-realization bridge:
-
-```lean
-GeneratedCertificate.external_predictedEvents_realized_of_cofinalTail :
-  (exists B, CofinalExceptionTail MidpointExceptionalPrime B) ->
-    GeneratedCertificate.predictedEvents subseteq GeneratedCertificate.actualEvents
-```
-
-Everything after that declaration is Lean-checked:
-
-1. bounded twin-prime midpoints imply a cofinal tail of midpoint-exceptional primes;
-2. the recursive MP/PM certificate turns route realization into a finite set contradiction;
-3. the generated C++ bridge supplies route realization for the predicted event set;
-4. twin midpoints are unbounded;
-5. twin primes are arbitrarily large.
-
-The final theorem is:
+The strongest default-facing endpoint is conditional on a concrete
+moving-window event-pressure certificate:
 
 ```lean
-TwinPrimeExternal.arbitrarily_large_twins :
-  forall N, exists p, N <= p /\ Nat.Prime p /\ Nat.Prime (p + 2)
+TwinPrimeCertificate.UniqueDescentEndpoint
+  .arbitrarily_large_twins_of_movingWindowEventPressure
 ```
 
-## Trust boundary
+Its certificate requires two concrete facts:
 
-The file `TwinPrimeExternal/GeneratedCertificate.lean` intentionally contains
-one final-theorem-relevant `axiom`. That declaration is the external C++
-route-realization dependency. The rest of the endpoint is ordinary Lean proof.
+```lean
+structure MovingWindowEventPressureCertificate where
+  threshold : Nat
+  slots : Nat -> Finset Nat
+  ProducedEvents : Nat -> Nat -> Finset Nat
+  distinct_event_pressure :
+    forall B N,
+      exists seeds : Finset Nat,
+        (slots B).card < (seeds.biUnion (ProducedEvents B)).card /\
+          forall p, p ∈ seeds ->
+            N < p /\ threshold < p /\ ModFiveOnePrime p
+  produced_events_land_in_window :
+    forall B p event,
+      B < p ->
+        threshold < p ->
+          ModFiveOnePrime p ->
+          MidpointExceptionalPrime p ->
+          event ∈ ProducedEvents B p ->
+          event ∈ slots B
+```
 
-The auxiliary file `TwinPrimeExternal/GeneratedGapCertificate.lean` contains a
-second external declaration for the finite no-exception window after 127. It
-documents the empirical starting point but is not a dependency of
-`TwinPrimeExternal.arbitrarily_large_twins`.
+The proof path is:
 
-The generated arithmetic currently records:
+1. A finite-twins hypothesis gives a cofinal tail of midpoint-exceptional
+   primes.
+2. The event-pressure certificate supplies, after any bound, finitely many
+   eligible seeds whose produced event union is larger than the finite slot
+   window.
+3. The cofinal tail makes all sufficiently large selected seeds
+   midpoint-exceptional.
+4. The landing theorem sends every produced event into `slots B`.
+5. This gives a strict cardinality contradiction.
+6. No cofinal exceptional tail exists, so twin primes are arbitrarily large.
+
+The remaining mathematical content is exactly the event-pressure certificate:
+fresh eligible starts must create enough distinct MP/PM events in the moving
+finite window. Lean also exposes a unique-descent/finite-ancestor endpoint, but
+that endpoint is stronger than currently justified by the generic descent
+theorem because fresh starts alone do not rule out event collisions.
+
+## DFI/Toth Root-Supply Bridge
+
+The file `TwinPrimeCertificate/QuadraticRootSupply.lean` isolates the weakest
+analytic input that currently looks capable of closing the successor-recovery
+gap. It does not add an axiom. Instead it proves, in Lean, that the following
+peer-reviewed-theorem-shaped corollary is enough:
+
+```lean
+structure QuadraticRootParentSupply
+    (events : Finset Event)
+    (ProducedEvents : Nat -> Finset Event) where
+  root_after : ...
+  root_produces : ...
+```
+
+Informally, `root_after` says that for every lost finite event and every lower
+bound `N`, there is a later split prime `p ≡ 1 [MOD 5]` with a legal root of
+one of the two quadratic row polynomials in the required residue class. This is
+exactly the Duke--Friedlander--Iwaniec / Toth root-equidistribution input, not
+plain Dirichlet in arithmetic progressions.
+
+Lean then proves:
+
+```lean
+exists_exact_eligible_recovery_batch_after_shift_of_quadraticRootSupply
+```
+
+So the current honest closure point is:
+
+1. DFI/Toth-style root supply gives arbitrarily late parents for each lost
+   event.
+2. Lean turns one-parent-after-any-bound into multiplicity two.
+3. Lean turns multiplicity two into exact shifted-tail event recovery.
+4. The existing tail-induction endpoint consumes the corresponding successor
+   recovery certificate.
+
+## Main Lean Files
 
 ```text
-firstOverflowRoot           = 191281
-firstOverflowSpan           = 17
-firstOverflowSplitRoots     = 1
-firstOverflowRoutedStarts   = 1
-generatedActualEventCount   = 95568
-generatedPredictedEventCount= 181052
-falsePredictedEventCount    = 115633
+TwinPrimeCertificate/Core.lean
+TwinPrimeCertificate/RecursiveMPPMCertificate.lean
+TwinPrimeCertificate/DescentPressure.lean
+TwinPrimeCertificate/QuadraticRootSupply.lean
+TwinPrimeCertificate/FiniteSinkAvoidance.lean
+TwinPrimeCertificate/TailInductionCertificate.lean
+TwinPrimeCertificate/Final.lean
+TwinPrimeCertificate/UniqueDescentEndpoint.lean
+TwinPrimeCertificate.lean
 ```
 
-## Regenerate the certificate
-
-There are four C++ tools:
-
-* `tools/search_recursive_prefix_threshold.cpp` is the actual finite search.
-  It consumes `certificates/generated_mppm_pressure_certificate.json` and emits
-  the small count summary.
-* `tools/generate_external_certificate.cpp` turns that summary into the Lean
-  external certificate file.
-* `tools/check_cone_survivor_gap.cpp` is the midpoint-row gap checker for the
-  finite window used here.
-* `tools/print_routing_example.cpp` prints the descent route displayed in the
-  paper.
-
-Run from the repository root with a C++17 compiler:
-
-```bash
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic tools/check_cone_survivor_gap.cpp -o tools/check_cone_survivor_gap
-./tools/check_cone_survivor_gap --last 127 --checked-to 191264 --json-out certificates/generated_gap_certificate_summary.json --lean-out TwinPrimeExternal/GeneratedGapCertificate.lean
-
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic tools/search_recursive_prefix_threshold.cpp -o tools/search_recursive_prefix_threshold
-./tools/search_recursive_prefix_threshold --cert certificates/generated_mppm_pressure_certificate.json --rstart 191265 --max-span 20 --json-out certificates/generated_external_certificate_summary.json --print-every 1
-
-g++ -std=c++17 -O2 -Wall -Wextra -pedantic tools/generate_external_certificate.cpp -o tools/generate_external_certificate
-./tools/generate_external_certificate --input-json certificates/generated_external_certificate_summary.json --audit --lean-out TwinPrimeExternal/GeneratedCertificate.lean --json-out certificate.json
-```
+The older generated routed-chain files remain in the repository as optional
+audit material, but they are not imported by `TwinPrimeCertificate.lean`.
 
 ## Build
-
-Run from the repository root:
 
 ```bash
 lake build
 ```
 
-## Expected axiom scan
+## Checks
 
-The scan should find exactly the generated external certificate declarations:
+Placeholder scan for the default endpoint files:
 
 ```bash
-rg -n "\b(sorry|admit|axiom|constant)\b" TwinPrimeExternal -g "*.lean"
+rg -n "\b(sorry|admit|axiom|constant)\b" \
+  TwinPrimeCertificate.lean \
+  TwinPrimeCertificate/Core.lean \
+  TwinPrimeCertificate/RecursiveMPPMCertificate.lean \
+  TwinPrimeCertificate/DescentPressure.lean \
+  TwinPrimeCertificate/QuadraticRootSupply.lean \
+  TwinPrimeCertificate/FiniteSinkAvoidance.lean \
+  TwinPrimeCertificate/TailInductionCertificate.lean \
+  TwinPrimeCertificate/Final.lean \
+  TwinPrimeCertificate/UniqueDescentEndpoint.lean
 ```
 
-Expected declarations:
+Expected output: no matches.
 
-* `GeneratedCertificate.external_predictedEvents_realized_of_cofinalTail`;
-* `GeneratedGapCertificate.external_exceptionFree_to_certificateThreshold`.
+Axiom check:
 
+```bash
+lake env lean --stdin <<'EOF'
+import TwinPrimeCertificate.UniqueDescentEndpoint
+#print axioms TwinPrimeCertificate.UniqueDescentEndpoint.arbitrarily_large_twins_of_movingWindowEventPressure
+EOF
+```
+
+Expected project-specific axioms: none. Standard Lean axioms such as
+`propext`, `Classical.choice`, and `Quot.sound` may appear.

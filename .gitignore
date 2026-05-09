@@ -1,10 +1,10 @@
 .lake/
 /build/
-/tools/generate_external_certificate
-/tools/search_recursive_prefix_threshold
-/tools/check_cone_survivor_gap
-/tools/print_routing_example
+/tools/generate_routed_mppm_chain_certificate
+/tools/audit_k2_forward
+/tools/audit_k2_forward_wsl
 *.exe
+/certificates/tmp_*.json
 paper/*.aux
 paper/*.log
 paper/*.out

@@ -88,6 +88,7 @@
    "inputRev": "v4.30.0-rc2",
    "inherited": true,
    "configFile": "lakefile.toml"}],
- "name": "twin_prime_external_certificate_endpoint",
+ "name": "twin_prime_certificate_endpoint",
  "lakeDir": ".lake",
  "fixedToolchain": false}
+
