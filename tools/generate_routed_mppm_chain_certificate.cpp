@@ -535,6 +535,9 @@ void write_shard(const fs::path& path, const std::string& mod,
   out << "  native_decide\n\n";
   out << "theorem chains_valid : allValid chains = true := by\n";
   out << "  native_decide\n\n";
+  out << "theorem chains_start_in_certificatePrefix :\n";
+  out << "    allStartsIn certificatePrefixStart certificatePrefixEnd chains = true := by\n";
+  out << "  native_decide\n\n";
   out << "theorem chains_strictlyIncreasing : strictlyIncreasingIds chains = true := by\n";
   out << "  native_decide\n\n";
   out << "theorem actualCount_eq : actualCount chains = actualPredictedCount := by\n";
@@ -600,6 +603,28 @@ void write_index(const fs::path& path, std::size_t shard_count,
     out << shard_name(i) << ".firstId, " << shard_name(i) << ".lastId";
   }
   out << "]\n\n";
+  out << "theorem checkedShardsStartInCertificatePrefix :\n";
+  out << "    True";
+  for (std::size_t i = 0; i < shard_count; ++i) {
+    out << " /\\\n";
+    out << "    (TwinPrimeCertificate.RoutedMPPMChainCertificate.allStartsIn "
+        << "certificatePrefixStart certificatePrefixEnd "
+        << shard_name(i) << ".chains = true)";
+  }
+  out << " := by\n";
+  out << "  constructor\n";
+  out << "  · trivial\n";
+  for (std::size_t i = 0; i + 1 < shard_count; ++i) {
+    out << "  constructor\n";
+    out << "  · exact " << shard_name(i)
+        << ".chains_start_in_certificatePrefix\n";
+  }
+  if (shard_count) {
+    out << "  exact " << shard_name(shard_count - 1)
+        << ".chains_start_in_certificatePrefix\n\n";
+  } else {
+    out << "  trivial\n\n";
+  }
   out << "end TwinPrimeCertificate.GeneratedRoutedMPPMChains\n";
 }
 

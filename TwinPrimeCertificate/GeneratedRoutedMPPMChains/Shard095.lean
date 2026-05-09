@@ -589,6 +589,10 @@ theorem chains_length : chains.length = chainCount := by
 theorem chains_valid : allValid chains = true := by
   native_decide
 
+theorem chains_start_in_certificatePrefix :
+    allStartsIn certificatePrefixStart certificatePrefixEnd chains = true := by
+  native_decide
+
 theorem chains_strictlyIncreasing : strictlyIncreasingIds chains = true := by
   native_decide
 

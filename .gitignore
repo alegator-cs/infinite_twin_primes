@@ -1,7 +1,10 @@
 .lake/
 /build/
 /tools/generate_routed_mppm_chain_certificate
+/tools/audit_k2_forward
+/tools/audit_k2_forward_wsl
 *.exe
+/certificates/tmp_*.json
 paper/*.aux
 paper/*.log
 paper/*.out

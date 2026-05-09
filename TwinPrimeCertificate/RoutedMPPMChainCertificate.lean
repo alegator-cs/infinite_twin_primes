@@ -29,6 +29,43 @@ def rowValid (p typ u h : Nat) : Bool :=
     (h < p) &&
     (p * h == rowProduct typ u)
 
+theorem rowValid_typ_left_or_right
+    {p typ u h : Nat}
+    (hvalid : rowValid p typ u h = true) :
+    typ = 0 \/ typ = 1 := by
+  unfold rowValid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  simpa using h₃.1
+
+theorem rowValid_h_pos
+    {p typ u h : Nat}
+    (hvalid : rowValid p typ u h = true) :
+    1 <= h := by
+  unfold rowValid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  exact of_decide_eq_true h₃.2
+
+theorem rowValid_h_lt_parent
+    {p typ u h : Nat}
+    (hvalid : rowValid p typ u h = true) :
+    h < p := by
+  unfold rowValid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  exact of_decide_eq_true h₂.2
+
+theorem rowValid_mul_eq
+    {p typ u h : Nat}
+    (hvalid : rowValid p typ u h = true) :
+    p * h = rowProduct typ u := by
+  unfold rowValid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  exact of_decide_eq_true h₁.2
+
 def slotValue (u slot : Nat) : Nat :=
   u + slot
 
@@ -49,6 +86,43 @@ def valid (edge : EdgeWitness) : Bool :=
     (edge.slot <= 4) &&
     (edge.child < edge.parent) &&
     (edge.child * edge.quotient == slotValue edge.u edge.slot)
+
+theorem rowValid_of_valid
+    {edge : EdgeWitness}
+    (hvalid : edge.valid = true) :
+    rowValid edge.parent edge.typ edge.u edge.h = true := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  exact h₃.1
+
+theorem slot_le_four_of_valid
+    {edge : EdgeWitness}
+    (hvalid : edge.valid = true) :
+    edge.slot <= 4 := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  exact of_decide_eq_true h₃.2
+
+theorem child_lt_parent_of_valid
+    {edge : EdgeWitness}
+    (hvalid : edge.valid = true) :
+    edge.child < edge.parent := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  exact of_decide_eq_true h₂.2
+
+theorem quotient_mul_eq_slotValue_of_valid
+    {edge : EdgeWitness}
+    (hvalid : edge.valid = true) :
+    edge.child * edge.quotient = slotValue edge.u edge.slot := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  exact of_decide_eq_true h₁.2
 
 end EdgeWitness
 
@@ -72,6 +146,55 @@ def valid (w : DirectEventWitness) : Bool :=
     (w.targetU < X) &&
     (w.side < 2) &&
     (w.code == TwinPrimeCertificate.encodeSideEvent w.targetU w.side)
+
+theorem rowValid_of_valid
+    {w : DirectEventWitness}
+    (hvalid : w.valid = true) :
+    rowValid w.parent w.typ w.u w.h = true := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  have h₄ := (Bool.and_eq_true _ _).mp h₃.1
+  exact h₄.1
+
+theorem targetU_eq_of_valid
+    {w : DirectEventWitness}
+    (hvalid : w.valid = true) :
+    w.targetU = w.u + w.k * w.parent := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  have h₄ := (Bool.and_eq_true _ _).mp h₃.1
+  exact of_decide_eq_true h₄.2
+
+theorem targetU_lt_X_of_valid
+    {w : DirectEventWitness}
+    (hvalid : w.valid = true) :
+    w.targetU < X := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  exact of_decide_eq_true h₃.2
+
+theorem side_lt_two_of_valid
+    {w : DirectEventWitness}
+    (hvalid : w.valid = true) :
+    w.side < 2 := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  exact of_decide_eq_true h₂.2
+
+theorem code_eq_of_valid
+    {w : DirectEventWitness}
+    (hvalid : w.valid = true) :
+    w.code = TwinPrimeCertificate.encodeSideEvent w.targetU w.side := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  exact of_decide_eq_true h₁.2
 
 end DirectEventWitness
 
@@ -108,6 +231,92 @@ def valid (chain : ChainWitness) : Bool :=
     chainConnectedAux chain.start chain.edges &&
     chain.terminal.valid
 
+theorem terminal_valid_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chain.terminal.valid = true := by
+  unfold valid at hvalid
+  exact (Bool.and_eq_true _ _).mp hvalid |>.2
+
+theorem terminal_targetU_lt_X_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chain.terminal.targetU < X :=
+  DirectEventWitness.targetU_lt_X_of_valid
+    (terminal_valid_of_valid hvalid)
+
+theorem connectedAux_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chainConnectedAux chain.start chain.edges = true := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  exact h₂.2
+
+theorem terminal_parent_eq_lastParent_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chain.terminal.parent = chain.lastParent := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  exact of_decide_eq_true h₃.2
+
+theorem terminal_code_eq_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chain.terminal.code = chain.code := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  have h₄ := (Bool.and_eq_true _ _).mp h₃.1
+  exact of_decide_eq_true h₄.2
+
+theorem terminal_eventId_eq_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chain.terminal.eventId = chain.eventId := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  have h₄ := (Bool.and_eq_true _ _).mp h₃.1
+  have h₅ := (Bool.and_eq_true _ _).mp h₄.1
+  exact of_decide_eq_true h₅.2
+
+theorem actual_zero_or_one_of_valid
+    {chain : ChainWitness}
+    (hvalid : chain.valid = true) :
+    chain.actual = 0 \/ chain.actual = 1 := by
+  unfold valid at hvalid
+  have h₁ := (Bool.and_eq_true _ _).mp hvalid
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  have h₃ := (Bool.and_eq_true _ _).mp h₂.1
+  have h₄ := (Bool.and_eq_true _ _).mp h₃.1
+  have h₅ := (Bool.and_eq_true _ _).mp h₄.1
+  simpa using h₅.1
+
+theorem edge_valid_of_connectedAux_head
+    {p : Nat} {edge : EdgeWitness} {rest : List EdgeWitness}
+    (hconn : chainConnectedAux p (edge :: rest) = true) :
+    edge.valid = true := by
+  unfold chainConnectedAux at hconn
+  have h₁ := (Bool.and_eq_true _ _).mp hconn
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  exact h₂.2
+
+theorem edge_parent_eq_of_connectedAux_head
+    {p : Nat} {edge : EdgeWitness} {rest : List EdgeWitness}
+    (hconn : chainConnectedAux p (edge :: rest) = true) :
+    edge.parent = p := by
+  unfold chainConnectedAux at hconn
+  have h₁ := (Bool.and_eq_true _ _).mp hconn
+  have h₂ := (Bool.and_eq_true _ _).mp h₁.1
+  exact of_decide_eq_true h₂.1
+
 end ChainWitness
 
 def StrictlyIncreasingById (chains : List ChainWitness) : Prop :=
@@ -125,6 +334,26 @@ def strictlyIncreasingIds : List ChainWitness -> Bool
 
 def allValid (chains : List ChainWitness) : Bool :=
   chains.all ChainWitness.valid
+
+def allStartsIn (lo hi : Nat) (chains : List ChainWitness) : Bool :=
+  chains.all (fun chain => (lo <= chain.start) && (chain.start <= hi))
+
+theorem chain_valid_of_allValid
+    {chains : List ChainWitness}
+    {chain : ChainWitness}
+    (hall : allValid chains = true)
+    (hmem : chain ∈ chains) :
+    chain.valid = true :=
+  (List.all_eq_true.mp hall) chain hmem
+
+theorem chain_terminal_targetU_lt_X_of_allValid
+    {chains : List ChainWitness}
+    {chain : ChainWitness}
+    (hall : allValid chains = true)
+    (hmem : chain ∈ chains) :
+    chain.terminal.targetU < X :=
+  ChainWitness.terminal_targetU_lt_X_of_valid
+    (chain_valid_of_allValid hall hmem)
 
 def actualCount (chains : List ChainWitness) : Nat :=
   (chains.filter (fun c => c.actual == 1)).length

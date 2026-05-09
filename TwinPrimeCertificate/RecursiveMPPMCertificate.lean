@@ -24,6 +24,50 @@ theorem right_row_residue5_identity (u : Nat) :
     4 * ((u + 1) * (u + 4) + 1) + 5 = (2 * u + 5) ^ 2 := by
   ring
 
+/--
+`5` is a quadratic residue modulo `p`, represented without Legendre-symbol
+machinery.
+-/
+def FiveQuadraticResidueModulo (p : Nat) : Prop :=
+  Exists (fun x : Nat => Nat.ModEq p (x ^ 2) 5)
+
+/--
+A divisor of a left quadratic row is a split prime candidate: if
+`p | u(u+3)+1`, then `(2u+3)^2 ≡ 5 (mod p)`.
+-/
+theorem left_row_divisor_gives_residue5
+    {p u : Nat}
+    (hdiv : Dvd.dvd p (u * (u + 3) + 1)) :
+    FiveQuadraticResidueModulo p := by
+  refine Exists.intro (2 * u + 3) ?_
+  have hrow : Nat.ModEq p (u * (u + 3) + 1) 0 :=
+    Nat.modEq_zero_iff_dvd.mpr hdiv
+  have h4row : Nat.ModEq p (4 * (u * (u + 3) + 1)) (4 * 0) :=
+    Nat.ModEq.mul (Nat.ModEq.refl 4) hrow
+  have hplus :
+      Nat.ModEq p (4 * (u * (u + 3) + 1) + 5) (4 * 0 + 5) :=
+    Nat.ModEq.add h4row (Nat.ModEq.refl 5)
+  simpa [left_row_residue5_identity u] using hplus
+
+/--
+A divisor of a right quadratic row is a split prime candidate: if
+`p | (u+1)(u+4)+1`, then `(2u+5)^2 ≡ 5 (mod p)`.
+-/
+theorem right_row_divisor_gives_residue5
+    {p u : Nat}
+    (hdiv : Dvd.dvd p ((u + 1) * (u + 4) + 1)) :
+    FiveQuadraticResidueModulo p := by
+  refine Exists.intro (2 * u + 5) ?_
+  have hrow : Nat.ModEq p ((u + 1) * (u + 4) + 1) 0 :=
+    Nat.modEq_zero_iff_dvd.mpr hdiv
+  have h4row :
+      Nat.ModEq p (4 * ((u + 1) * (u + 4) + 1)) (4 * 0) :=
+    Nat.ModEq.mul (Nat.ModEq.refl 4) hrow
+  have hplus :
+      Nat.ModEq p (4 * ((u + 1) * (u + 4) + 1) + 5) (4 * 0 + 5) :=
+    Nat.ModEq.add h4row (Nat.ModEq.refl 5)
+  simpa [right_row_residue5_identity u] using hplus
+
 /-- Width-two left routing identity used by the recursive closure. -/
 theorem quad_route_left_identity (u : Nat) :
     u * (u + 3) + 2 = (u + 1) * (u + 2) := by

@@ -53,11 +53,17 @@
 
 \newcommand{\FileEntry}[1]{\item \textbf{\Code{#1}}\par\vspace{-0.25em}}
 
+\newenvironment{objectlist}
+  {\begin{itemize}[leftmargin=1.5em,itemsep=0.08em]}
+  {\end{itemize}}
+
+\newcommand{\Obj}[1]{\item \Lean{#1}}
+
 \newenvironment{frontnote}
   {\begin{center}\begin{minipage}{0.9\textwidth}\small\itshape\noindent}
   {\end{minipage}\end{center}}
 
-\title{Twin Prime Infinitude by Finite Contradiction}
+\title{Twin Prime Conditional Endpoint by Finite Contradiction}
 \author{alegator (coideated with GPT 5.4, 5.5)}
 \date{May 6, 2026}
 
@@ -69,17 +75,16 @@
 \textbf{Abstract}
 \end{center}
 \noindent
-We formalize an unconditional twin prime infinitude theorem dependent only on
-standard axioms and an generated finite certificate checked by Lean. This is by manner
-that supposing the finiteness of twins forces a cofinal tail of
-"exceptional" primes, which recursively bubble down composite-prime and
-prime-composite pair counts into a preceding finite block, necessarily
-eventually exceeding its capacity for such pairs, forcing a contradiction by
-set cardinality. This is proven for a finite base case by finding the first
-adjacent exception tail after the largest known exception \(B=127\) that would
-cause the contradiction, and by induction, all further exceptions also
-contradict, and the initial finite twins hypothesis is false, so infinite
-twins is proven.
+We formalize the Lean endpoint for a finite-contradiction approach to twin
+prime infinitude.  The checked core proves that supposing the finiteness of
+twins forces a cofinal tail of midpoint-exceptional primes, and that any
+cofinal tail contradicts a moving-window MP/PM event-pressure certificate.  The
+remaining mathematical content is the pressure certificate itself: fresh
+eligible exceptional starts must create enough distinct composite-prime and
+prime-composite middle-pair events in the finite moving window.  The generated
+routed-chain shards provide audit data for this pressure picture, but the
+generic fresh-start and descent theorems alone do not yet prove fresh event
+pressure.
 
 \section{Introduction}
 \noindent
@@ -97,13 +102,12 @@ Polymath8 to the unconditional bound \(H_1\le246\) \cite{Polymath8b2014}.
 
 \noindent
 This paper does not try to improve sieve weights or follow the bounded-gap
-\(b\le246\) route.  It uses midpoint rows and a finite recursive certificate:
-if twins were finite, a cofinal tail of exceptional primes would force
-composite-prime and prime-composite middle-pair events to descend into a fixed
-finite block.  The generated recursive closure predicts more distinct events
-than the block contains.  Lean checks the set-theoretic contradiction and the
-reduction from no cofinal exceptional tail to arbitrarily large twin primes;
-the generated routed-chain certificate supplies the finite descent and counting data.
+\(b\le246\) route.  It uses midpoint rows and recursive MP/PM event descent.
+If twins were finite, a cofinal tail of exceptional primes would exist.  Lean
+checks that a suitable event-pressure theorem for that tail rules out the tail,
+and then gives arbitrarily large twin primes.  The present repository should be
+read as a precise conditional endpoint plus finite audit data, not as a closed
+unconditional proof.
 
 \clearpage
 \tableofcontents
@@ -993,6 +997,60 @@ The only project-specific routed-chain certificate needed to derive it is
     \item \Lean{arbitrarily\_large\_twins\_of\_routedChainRealization}: the routed-chain twin-prime endpoint.
   \end{itemize}
 \end{filelist}
+
+\subsection{Analytic successor-recovery bridge}
+\noindent
+The routed-chain certificate proves a finite base overflow.  To propagate this
+overflow after shifting a hypothetical cofinal tail start from \(B\) to
+\(B+1\), the proof needs a recovery principle: every event lost by removing
+the first seed must have arbitrarily late eligible split-prime parents.
+
+The row polynomials
+\[
+  L(u)=u(u+3)+1,\qquad R(u)=(u+1)(u+4)+1
+\]
+both have discriminant \(5\).  A DFI--Toth style theorem on roots of quadratic
+congruences to prime moduli gives exactly the required kind of supply:
+for a fixed finite residue condition on \(u\), roots of \(L(u)\equiv0\pmod p\)
+or \(R(u)\equiv0\pmod p\) occur for arbitrarily large split primes \(p\), and
+with \(u\) in the legal-height range.  This is not plain Dirichlet in
+arithmetic progressions; Dirichlet controls the residue class of \(p\), while
+the recovery theorem must control the residue and interval location of a root
+\(u\) modulo \(p\).  The relevant analytic source is the theorem of
+Duke--Friedlander--Iwaniec \cite{DFI1995}, with Toth's extension
+\cite{Toth2000} and later refinements such as Ngo \cite{Ngo2021}.
+
+The Lean file \Code{TwinPrimeCertificate/QuadraticRootSupply.lean} does not
+take this theorem as an axiom.  It defines the narrow corollary that must be
+proved from the analytic literature:
+\[
+  \Lean{QuadraticRootParentSupply}.
+\]
+From this corollary Lean proves the full finite recovery step.  The key point
+is simple: if one arbitrarily late parent exists after every bound, then ask
+once after \(N\) and once after the first parent.  This gives two distinct
+eligible parents, which is exactly the multiplicity-two hypothesis used by
+the shifted-tail recovery theorem.
+
+\begin{filelist}
+  \FileEntry{TwinPrimeCertificate/QuadraticRootSupply.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{QuadraticRowSide}: the left/right row label.
+    \item \Lean{quadraticRowValue}: evaluates \(L(u)\) or \(R(u)\).
+    \item \Lean{EventParentSupply}: event-level arbitrarily-late parent supply.
+    \item \Lean{multiplicity\_two\_after\_of\_eventParentSupply}: turns one-parent-after-any-bound into multiplicity two.
+    \item \Lean{exists\_exact\_eligible\_recovery\_batch\_after\_shift\_of\_eventParentSupply}: exact shifted-tail recovery from event parent supply.
+    \item \Lean{QuadraticRootParentSupply}: the DFI--Toth-shaped root-supply corollary.
+    \item \Lean{QuadraticRootParentSupply.toEventParentSupply}: forgets row data and keeps the event-level supply.
+    \item \Lean{exists\_exact\_eligible\_recovery\_batch\_after\_shift\_of\_quadraticRootSupply}: exact recovery from the quadratic-root supply.
+  \end{itemize}
+
+  \FileEntry{TwinPrimeCertificate/DescentPressure.lean}
+  \begin{itemize}[leftmargin=1.5em,itemsep=0.15em]
+    \item \Lean{exists\_exact\_eligible\_recovery\_batch\_after\_shift}: the recovery theorem consumed by the quadratic-root bridge.
+  \end{itemize}
+\end{filelist}
+
 \clearpage
 \section{Main theorem}
 \noindent
@@ -1093,6 +1151,21 @@ D. H. J. Polymath,
 \emph{Variants of the Selberg sieve, and bounded intervals containing many primes},
 Research in the Mathematical Sciences, 1:12, 2014.
 
+\bibitem{DFI1995}
+W. Duke, J. B. Friedlander, and H. Iwaniec,
+\emph{Equidistribution of roots of a quadratic congruence to prime moduli},
+Annals of Mathematics, 141(2):423--441, 1995.
+
+\bibitem{Toth2000}
+A. Toth,
+\emph{Roots of quadratic congruences},
+International Mathematics Research Notices, 2000(14):719--739, 2000.
+
+\bibitem{Ngo2021}
+H. T. Ngo,
+\emph{On roots of quadratic congruences},
+arXiv:2107.13301, 2021.
+
 \bibitem{Shanks1973}
 D. Shanks,
 \emph{Five number-theoretic algorithms},
@@ -1107,9 +1180,10 @@ Congressus Numerantium, 7:51--70, 1973.
 \noindent
 
 The routed-chain endpoint is audited with
-\begin{lstlisting}
-#print axioms TwinPrimeCertificate.GeneratedTailInductionCertificate.arbitrarily_large_twins_of_routedChainRealization
-\end{lstlisting}
+\[
+\Lean{GeneratedTailInductionCertificate.arbitrarily\_large\_twins\_of\_routedChainRealization}.
+\]
+In Lean this is checked with \Code{\#print axioms}.
 The theorem is parametric in a value of
 \Lean{RoutedChainRealizationCertificate}.  Lean reports only the standard axioms
 used by ordinary classical finite-set reasoning:
@@ -1162,6 +1236,18 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
   row identities, side-event encoding, and decreasing descended-prime edge facts
   used by the routed-chain checker.
 
+  \item \Code{TwinPrimeCertificate/DescentPressure.lean}: proves the count-level,
+  escape-bound, exact-recovery, and multiplicity-two recovery lemmas used by the
+  shifted-tail pressure program.
+
+  \item \Code{TwinPrimeCertificate/QuadraticRootSupply.lean}: isolates the
+  DFI--Toth-shaped quadratic-root parent supply and proves that it implies the
+  exact eligible recovery theorem.
+
+  \item \Code{TwinPrimeCertificate/FiniteSinkAvoidance.lean}: contains the
+  finite-sink, moving-window event-pressure, pair-pressure, terminal-slot, and
+  ancestor-bridge endpoint surfaces.
+
   \item \Code{TwinPrimeCertificate/RoutedMPPMChainCertificate.lean}: defines the
   Boolean checker for generated row witnesses, edge witnesses, direct event
   witnesses, full chains, strict event-id ordering, and shard-local counts.
@@ -1189,6 +1275,10 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
   \item \Code{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}: connects
   \Lean{RoutedChainRealizationCertificate} to \Lean{Final.lean} and exposes the
   routed-chain arbitrarily-large-twins theorem.
+
+  \item \Code{TwinPrimeCertificate/UniqueDescentEndpoint.lean}: exposes the
+  unique moving-window descent, injective descent, and moving-window
+  event-pressure theorem surfaces.
 \end{itemize}
 
 \subsection{C++ tools and certificates}
@@ -1198,6 +1288,9 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
   finite MP/PM input certificate, computes reachable routed-chain witnesses from
   the chosen start split prime, emits the Lean shard directory, and prints an
   audit summary.
+
+  \item \Code{tools/audit\_k2\_forward.cpp}: exploratory C++ audit tool for
+  sliding-window event recovery, multiplicity, and shifted-tail experiments.
 
   \item \Code{certificates/generated\_mppm\_pressure\_certificate.json}: finite
   generated Base/MP/PM input block consumed by the routed-chain generator.
@@ -1213,6 +1306,9 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
 
   \item \Code{README.md}: command-oriented repository summary and regeneration notes.
 
+  \item \Code{research/pressure\_overflow\_program.md}: running research log for
+  the pressure, recovery, and DFI--Toth root-supply route.
+
   \item \Code{lakefile.toml}: Lean package definition for \Code{TwinPrimeCertificate}.
 
   \item \Code{lake-manifest.json}: Lake dependency manifest.
@@ -1221,6 +1317,367 @@ The C++ source file in \Code{tools/} carries the finite certificate generator.
 
   \item \Code{.gitignore}: excludes generated build clutter and local artifacts.
 \end{itemize}
+
+\clearpage
+\section{Lean object index}
+\noindent
+
+This index lists every top-level declaration in the non-generated Lean files used
+by the repository, plus the repeated schema for generated shard files.  The
+section-local formal-object lists above explain the main mathematical role of
+the objects; this appendix is the exhaustive name map for audit and navigation.
+
+\subsection{Core definitions and endpoint logic}
+
+\begin{filelist}
+  \FileEntry{TwinPrimeCertificate/Core.lean}
+  \begin{objectlist}
+    \Obj{lastObservedException}
+    \Obj{observedVerifiedTo}
+    \Obj{certificateVerifiedTo}
+    \Obj{certificateFirstSplitPrime}
+    \Obj{certificatePrefixStart}
+    \Obj{certificatePrefixEnd}
+    \Obj{generatedMPPMCard}
+    \Obj{ModFiveOnePrime}
+    \Obj{exists\_modFiveOnePrime\_gt}
+    \Obj{exists\_modFiveOnePrime\_gt\_not\_mem\_finset}
+    \Obj{not\_cofinal\_modFiveOnePrimes\_subset\_finset}
+    \Obj{ObservedExceptionGap}
+    \Obj{ObservedExceptionGap.size}
+    \Obj{observedExceptionGap}
+    \Obj{certificateExceptionGap}
+    \Obj{certificateVerifiedTo\_le\_observed}
+    \Obj{FirstExceptionAfterGap}
+    \Obj{FirstExceptionAfterLastObserved}
+    \Obj{ExceptionFreeUpTo}
+    \Obj{firstExceptionAfterLast\_occurs\_after\_of\_exceptionFreeUpTo}
+    \Obj{firstExceptionAfterLast\_occurs\_after\_certificateThreshold\_of\_exceptionFreeUpTo}
+    \Obj{CofinalExceptionTail}
+    \Obj{cofinalTail\_forces\_seed}
+    \Obj{certificateFirstSplitPrime\_prime}
+    \Obj{cofinalTail\_forces\_certificateFirstSplitPrime}
+    \Obj{cofinalTail\_has\_modFiveOne\_exceptional\_seed\_after}
+    \Obj{CofinalTailContradicts}
+    \Obj{cofinalTail\_mono\_threshold}
+    \Obj{cofinalTailContradicts\_mono\_backward}
+    \Obj{ExceptionPrefix}
+    \Obj{cofinalTail\_of\_exceptionPrefix\_of\_cofinalTail}
+    \Obj{cofinalTailContradicts\_of\_exceptionPrefix}
+    \Obj{cofinalTailContradicts\_successor\_of\_finite\_prefix}
+    \Obj{cofinalTailContradicts\_successor\_of\_exists\_finite\_prefix}
+    \Obj{cofinalTailContradicts\_successor\_of\_succ\_exception}
+    \Obj{exists\_count\_exceeds\_of\_eventual\_increment}
+    \Obj{exists\_new\_image\_of\_card\_lt\_image}
+    \Obj{card\_le\_mul\_of\_fiber\_bound}
+    \Obj{exists\_new\_image\_of\_fiber\_bound}
+    \Obj{exists\_fresh\_event\_of\_escape\_and\_fiber\_bounds}
+    \Obj{composite\_fiber\_bound}
+    \Obj{cofinalTailContradicts\_of\_base\_and\_successor}
+    \Obj{no\_cofinalTail\_of\_base\_and\_successor\_contradiction}
+    \Obj{BoundedTwinMids}
+    \Obj{ArbitrarilyLargeTwins}
+    \Obj{MidpointRowIndex}
+    \Obj{MidpointRowMidpoint}
+    \Obj{MidpointTwinWitnessAt}
+    \Obj{MidpointExceptionalPrime}
+    \Obj{exists\_prime\_dvd\_lt\_of\_not\_prime\_lt\_square}
+    \Obj{MidpointExceptionalPrime.exists\_descending\_prime\_divisor}
+    \Obj{MidpointPrimeDescentEdge}
+    \Obj{odd\_prime\_has\_two\_descent\_edge}
+    \Obj{MidpointPrimeDescentPathBelow}
+    \Obj{cofinalTail\_exists\_primeDescentPathBelow}
+    \Obj{boundedTwinMids\_forces\_cofinalTail\_midpointExceptionalPrime}
+    \Obj{cofinalTail\_gives\_firstExceptionAfterGap}
+    \Obj{firstException\_mono\_backward}
+    \Obj{no\_firstException\_mono\_forward}
+    \Obj{arbitrarily\_large\_twins\_of\_not\_boundedTwinMids}
+    \Obj{no\_boundedTwinMids\_of\_no\_cofinalExceptionTail}
+    \Obj{arbitrarily\_large\_twins\_of\_no\_cofinalExceptionTail}
+    \Obj{no\_boundedTwinMids\_of\_no\_certificateFirstException}
+    \Obj{arbitrarily\_large\_twins\_of\_no\_certificateFirstException}
+    \Obj{no\_later\_firstException\_of\_no\_certificateFirstException}
+    \Obj{no\_observed\_firstException\_of\_no\_certificateFirstException}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/Final.lean}
+  \begin{objectlist}
+    \Obj{no\_cofinalExceptionTail}
+    \Obj{not\_boundedTwinMids}
+    \Obj{arbitrarily\_large\_twins}
+  \end{objectlist}
+\end{filelist}
+
+\subsection{Recursive MP/PM and descent-pressure files}
+
+\begin{filelist}
+  \FileEntry{TwinPrimeCertificate/RecursiveMPPMCertificate.lean}
+  \begin{objectlist}
+    \Obj{left\_row\_residue5\_identity}
+    \Obj{right\_row\_residue5\_identity}
+    \Obj{FiveQuadraticResidueModulo}
+    \Obj{left\_row\_divisor\_gives\_residue5}
+    \Obj{right\_row\_divisor\_gives\_residue5}
+    \Obj{quad\_route\_left\_identity}
+    \Obj{quad\_route\_right\_identity}
+    \Obj{encodeSideEvent}
+    \Obj{encodeSideEvent\_zero\_ne\_one}
+    \Obj{encodeSideEvent\_injective\_of\_side\_lt\_two}
+    \Obj{DescendedPrimeEdge}
+    \Obj{DescendedPrimeEdge.decreases}
+    \Obj{DescendedPrimeEdge.irrefl}
+    \Obj{DescendedPrimeEdge.no\_two\_cycle}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/DescentPressure.lean}
+  \begin{objectlist}
+    \Obj{FractionalDescentPressureCertificate}
+    \Obj{false\_of\_fractionalDescentPressure}
+    \Obj{false\_of\_generated\_fractionalDescentPressure}
+    \Obj{EscapeBoundPressureCertificate}
+    \Obj{false\_of\_escapeBoundPressure}
+    \Obj{false\_of\_generated\_escapeBoundPressure}
+    \Obj{exists\_fresh\_event\_of\_no\_escape\_fiber\_bound}
+    \Obj{exists\_fresh\_event\_of\_arbitrarily\_large\_no\_escape\_batches}
+    \Obj{card\_le\_sum\_of\_fiber\_bounds}
+    \Obj{not\_arbitrarily\_large\_batches\_into\_finite\_slots}
+    \Obj{exists\_finite\_recovery\_batch\_of\_lostEvents}
+    \Obj{oldEvents\_subset\_shifted\_union\_recovery}
+    \Obj{exists\_exact\_recovery\_batch\_after\_shift}
+    \Obj{exists\_shifted\_seed\_of\_multiplicity\_two}
+    \Obj{oldEvents\_subset\_shifted\_of\_removed\_events\_multiplicity\_two}
+    \Obj{oldEvents\_subset\_shifted\_union\_later\_of\_multiplicity\_two}
+    \Obj{exists\_later\_ancestor\_of\_positive\_multiplicity}
+    \Obj{exists\_later\_ancestor\_of\_multiplicity\_two}
+    \Obj{exists\_later\_eligible\_ancestor\_of\_multiplicity\_two}
+    \Obj{lostEvents\_have\_later\_eligible\_ancestors\_of\_multiplicity\_two}
+    \Obj{exists\_exact\_eligible\_recovery\_batch\_after\_shift}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/QuadraticRootSupply.lean}
+  \begin{objectlist}
+    \Obj{QuadraticRowSide}
+    \Obj{quadraticRowValue}
+    \Obj{quadraticRowValue\_left}
+    \Obj{quadraticRowValue\_right}
+    \Obj{EventParentSupply}
+    \Obj{multiplicity\_two\_after\_of\_eventParentSupply}
+    \Obj{exists\_exact\_eligible\_recovery\_batch\_after\_shift\_of\_eventParentSupply}
+    \Obj{QuadraticRootParentSupply}
+    \Obj{QuadraticRootParentSupply.toEventParentSupply}
+    \Obj{exists\_exact\_eligible\_recovery\_batch\_after\_shift\_of\_quadraticRootSupply}
+  \end{objectlist}
+\end{filelist}
+
+\subsection{Finite-sink and tail-induction surfaces}
+
+\begin{filelist}
+  \FileEntry{TwinPrimeCertificate/FiniteSinkAvoidance.lean}
+  \begin{objectlist}
+    \Obj{finite\_ancestor\_set\_misses\_arbitrarily\_large\_modFiveOnePrime}
+    \Obj{finite\_ancestor\_set\_not\_cofinal\_for\_modFiveOnePrimes}
+    \Obj{exists\_modFiveOnePrime\_batch\_after}
+    \Obj{FiniteSinkAvoidanceCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_finiteSinkAvoidance}
+    \Obj{arbitrarily\_large\_twins\_of\_finiteSinkAvoidance}
+    \Obj{ResidueFiniteSinkAvoidanceCertificate}
+    \Obj{ResidueFiniteSinkAvoidanceCertificate.toFiniteSinkAvoidance}
+    \Obj{no\_cofinalExceptionTail\_of\_residueFiniteSinkAvoidance}
+    \Obj{arbitrarily\_large\_twins\_of\_residueFiniteSinkAvoidance}
+    \Obj{TerminalSlotSinkCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotSink}
+    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotSink}
+    \Obj{slotAncestorUnion}
+    \Obj{TerminalSlotAncestorBridgeCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotAncestorBridge}
+    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotAncestorBridge}
+    \Obj{movingSlotAncestorUnion}
+    \Obj{MovingTerminalSlotAncestorBridgeCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_movingTerminalSlotAncestorBridge}
+    \Obj{arbitrarily\_large\_twins\_of\_movingTerminalSlotAncestorBridge}
+    \Obj{no\_cofinalExceptionTail\_of\_uniqueMovingWindowDescent}
+    \Obj{arbitrarily\_large\_twins\_of\_uniqueMovingWindowDescent}
+    \Obj{no\_cofinalExceptionTail\_of\_injectiveMovingWindowDescent}
+    \Obj{arbitrarily\_large\_twins\_of\_injectiveMovingWindowDescent}
+    \Obj{MovingWindowEventPressureCertificate}
+    \Obj{PairEventPressureCertificate}
+    \Obj{PairEventPressureCertificate.toMovingWindowEventPressure}
+    \Obj{no\_cofinalExceptionTail\_of\_movingWindowEventPressure}
+    \Obj{arbitrarily\_large\_twins\_of\_movingWindowEventPressure}
+    \Obj{no\_cofinalExceptionTail\_of\_pairEventPressure}
+    \Obj{arbitrarily\_large\_twins\_of\_pairEventPressure}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/TailInductionCertificate.lean}
+  \begin{objectlist}
+    \Obj{TailInductionCertificate}
+    \Obj{TailInductionCertificate.of\_finitePrefixRecovery}
+    \Obj{TailInductionCertificate.of\_no\_cofinalTail}
+    \Obj{TailInductionCertificate.no\_cofinalTail}
+    \Obj{MidpointTailInductionCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_tailInductionCertificate}
+    \Obj{arbitrarily\_large\_twins\_of\_tailInductionCertificate}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/UniqueDescentEndpoint.lean}
+  \begin{objectlist}
+    \Obj{fromUniqueMovingWindowDescent}
+    \Obj{no\_cofinalExceptionTail\_of\_uniqueMovingWindowDescent}
+    \Obj{arbitrarily\_large\_twins\_of\_uniqueMovingWindowDescent}
+    \Obj{fromInjectiveMovingWindowDescent}
+    \Obj{no\_cofinalExceptionTail\_of\_injectiveMovingWindowDescent}
+    \Obj{arbitrarily\_large\_twins\_of\_injectiveMovingWindowDescent}
+    \Obj{fromMovingWindowEventPressure}
+    \Obj{no\_cofinalExceptionTail\_of\_movingWindowEventPressure}
+    \Obj{arbitrarily\_large\_twins\_of\_movingWindowEventPressure}
+  \end{objectlist}
+\end{filelist}
+
+\subsection{Generated-tail and routed-chain bridge files}
+
+\begin{filelist}
+  \FileEntry{TwinPrimeCertificate/GeneratedTailInductionCertificate.lean}
+  \begin{objectlist}
+    \Obj{GeneratedFinitePrefixRecoveryCertificate}
+    \Obj{GeneratedSuccessorRecoveryCertificate}
+    \Obj{fromGeneratedFinitePrefixRecovery}
+    \Obj{fromGeneratedSuccessorRecovery}
+    \Obj{no\_cofinalExceptionTail\_of\_generatedFinitePrefixRecovery}
+    \Obj{arbitrarily\_large\_twins\_of\_generatedFinitePrefixRecovery}
+    \Obj{no\_cofinalExceptionTail\_of\_generatedSuccessorRecovery}
+    \Obj{arbitrarily\_large\_twins\_of\_generatedSuccessorRecovery}
+    \Obj{fromRoutedChainRealization}
+    \Obj{no\_cofinalExceptionTail\_of\_routedChainRealization}
+    \Obj{arbitrarily\_large\_twins\_of\_routedChainRealization}
+    \Obj{fromModFiveSeedOverflow}
+    \Obj{no\_cofinalExceptionTail\_of\_modFiveSeedOverflow}
+    \Obj{arbitrarily\_large\_twins\_of\_modFiveSeedOverflow}
+    \Obj{fromModFiveGoodSeedOverflow}
+    \Obj{no\_cofinalExceptionTail\_of\_modFiveGoodSeedOverflow}
+    \Obj{arbitrarily\_large\_twins\_of\_modFiveGoodSeedOverflow}
+    \Obj{fromTerminalSlotSink}
+    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotSink}
+    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotSink}
+    \Obj{fromTerminalSlotAncestorBridge}
+    \Obj{no\_cofinalExceptionTail\_of\_terminalSlotAncestorBridge}
+    \Obj{arbitrarily\_large\_twins\_of\_terminalSlotAncestorBridge}
+    \Obj{fromMovingTerminalSlotAncestorBridge}
+    \Obj{no\_cofinalExceptionTail\_of\_movingTerminalSlotAncestorBridge}
+    \Obj{arbitrarily\_large\_twins\_of\_movingTerminalSlotAncestorBridge}
+    \Obj{fromUniqueMovingWindowDescent}
+    \Obj{no\_cofinalExceptionTail\_of\_uniqueMovingWindowDescent}
+    \Obj{arbitrarily\_large\_twins\_of\_uniqueMovingWindowDescent}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/RoutedMPPMChainBridge.lean}
+  \begin{objectlist}
+    \Obj{routed\_checkedChainCount\_exceeds\_generatedMPPMCard}
+    \Obj{routedChainActualEvents}
+    \Obj{routedChainActualEvents\_card}
+    \Obj{routedChainPredictedEvents}
+    \Obj{routedChainPredictedEvents\_card}
+    \Obj{routedChainPredictedEvents\_card\_eq}
+    \Obj{routedChainActualEvents\_card\_eq}
+    \Obj{routedChainPredicted\_card\_exceeds\_actual}
+    \Obj{cofinalTail\_before\_certificatePrefix\_forces\_generatedSeed}
+    \Obj{certificateVerifiedTo\_lt\_certificatePrefixStart}
+    \Obj{cofinalTail\_certificateVerifiedTo\_forces\_generatedSeed}
+    \Obj{chain\_start\_eq\_certificateFirst\_of\_mem\_allStartsIn}
+    \Obj{chain\_start\_exceptional\_of\_cofinalTail\_before\_prefix}
+    \Obj{chain\_start\_exceptional\_of\_cofinalTail\_certificateVerifiedTo}
+    \Obj{RoutedBaseCaseRealizationCertificate}
+    \Obj{cofinalTailContradicts\_certificateVerifiedTo\_of\_routedBaseCaseCertificate}
+    \Obj{RoutedChainRealizationCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_routedMPPMChainCertificate}
+    \Obj{ModFiveSeedOverflowCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_modFiveSeedOverflowCertificate}
+    \Obj{ModFiveGoodSeedOverflowCertificate}
+    \Obj{no\_cofinalExceptionTail\_of\_modFiveGoodSeedOverflowCertificate}
+  \end{objectlist}
+\end{filelist}
+
+\subsection{Routed-chain checker and generated shard schema}
+
+\begin{filelist}
+  \FileEntry{TwinPrimeCertificate/RoutedMPPMChainCertificate.lean}
+  \begin{objectlist}
+    \Obj{X}
+    \Obj{rowProduct}
+    \Obj{rowValid}
+    \Obj{rowValid\_typ\_left\_or\_right}
+    \Obj{rowValid\_h\_pos}
+    \Obj{rowValid\_h\_lt\_parent}
+    \Obj{rowValid\_mul\_eq}
+    \Obj{slotValue}
+    \Obj{EdgeWitness}
+    \Obj{EdgeWitness.valid}
+    \Obj{EdgeWitness.rowValid\_of\_valid}
+    \Obj{EdgeWitness.slot\_le\_four\_of\_valid}
+    \Obj{EdgeWitness.child\_lt\_parent\_of\_valid}
+    \Obj{EdgeWitness.quotient\_mul\_eq\_slotValue\_of\_valid}
+    \Obj{DirectEventWitness}
+    \Obj{DirectEventWitness.valid}
+    \Obj{DirectEventWitness.rowValid\_of\_valid}
+    \Obj{DirectEventWitness.targetU\_eq\_of\_valid}
+    \Obj{DirectEventWitness.targetU\_lt\_X\_of\_valid}
+    \Obj{DirectEventWitness.side\_lt\_two\_of\_valid}
+    \Obj{DirectEventWitness.code\_eq\_of\_valid}
+    \Obj{ChainWitness}
+    \Obj{ChainWitness.lastParentAux}
+    \Obj{ChainWitness.lastParent}
+    \Obj{ChainWitness.chainConnectedAux}
+    \Obj{ChainWitness.valid}
+    \Obj{ChainWitness.terminal\_valid\_of\_valid}
+    \Obj{ChainWitness.terminal\_targetU\_lt\_X\_of\_valid}
+    \Obj{ChainWitness.connectedAux\_of\_valid}
+    \Obj{ChainWitness.terminal\_parent\_eq\_lastParent\_of\_valid}
+    \Obj{ChainWitness.terminal\_code\_eq\_of\_valid}
+    \Obj{ChainWitness.terminal\_eventId\_eq\_of\_valid}
+    \Obj{ChainWitness.actual\_zero\_or\_one\_of\_valid}
+    \Obj{ChainWitness.edge\_valid\_of\_connectedAux\_head}
+    \Obj{ChainWitness.edge\_parent\_eq\_of\_connectedAux\_head}
+    \Obj{StrictlyIncreasingById}
+    \Obj{strictlyIncreasingIdsFrom}
+    \Obj{strictlyIncreasingIds}
+    \Obj{allValid}
+    \Obj{allStartsIn}
+    \Obj{chain\_valid\_of\_allValid}
+    \Obj{chain\_terminal\_targetU\_lt\_X\_of\_allValid}
+    \Obj{actualCount}
+    \Obj{falseCount}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/GeneratedRoutedMPPMChains/Index.lean}
+  \begin{objectlist}
+    \Obj{shardCount}
+    \Obj{checkedChainCount}
+    \Obj{checkedActualPredictedCount}
+    \Obj{checkedFalsePredictedCount}
+    \Obj{checkedChainCount\_eq}
+    \Obj{checkedActualPredictedCount\_eq}
+    \Obj{checkedFalsePredictedCount\_eq}
+    \Obj{shard\_boundaries\_strict}
+    \Obj{checkedShardsStartInCertificatePrefix}
+  \end{objectlist}
+
+  \FileEntry{TwinPrimeCertificate/GeneratedRoutedMPPMChains/ShardNNN.lean}
+  Each generated shard has the same declaration schema below, inside its shard
+  namespace.  The concrete chain arrays differ by shard.
+  \begin{objectlist}
+    \Obj{chains}
+    \Obj{chainCount}
+    \Obj{actualPredictedCount}
+    \Obj{falsePredictedCount}
+    \Obj{firstId}
+    \Obj{lastId}
+    \Obj{chains\_length}
+    \Obj{chains\_valid}
+    \Obj{chains\_start\_in\_certificatePrefix}
+    \Obj{chains\_strictlyIncreasing}
+    \Obj{actualCount\_eq}
+    \Obj{falseCount\_eq}
+  \end{objectlist}
+\end{filelist}
 
 \end{document}
 

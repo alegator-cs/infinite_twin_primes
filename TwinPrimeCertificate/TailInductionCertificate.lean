@@ -31,6 +31,24 @@ structure TailInductionCertificate (Exception : Nat -> Prop) where
 
 namespace TailInductionCertificate
 
+def of_finitePrefixRecovery
+    {Exception : Nat -> Prop}
+    (baseThreshold : Nat)
+    (base_contradiction :
+      CofinalTailContradicts Exception baseThreshold)
+    (recover :
+      forall B,
+        baseThreshold <= B ->
+          CofinalTailContradicts Exception B ->
+            exists C, B + 1 <= C /\ ExceptionPrefix Exception B C) :
+    TailInductionCertificate Exception where
+  baseThreshold := baseThreshold
+  base_contradiction := base_contradiction
+  successor_contradiction := by
+    intro B hB hContradicts
+    exact cofinalTailContradicts_successor_of_exists_finite_prefix
+      hContradicts (recover B hB hContradicts)
+
 def of_no_cofinalTail
     {Exception : Nat -> Prop}
     (baseThreshold : Nat)
